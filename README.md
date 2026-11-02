@@ -12,6 +12,7 @@ and log **Entries** on a calendar with an optional short note.
 ```bash
 python3.12 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt -r requirements-dev.txt
+alembic upgrade head            # create/upgrade the SQLite database
 uvicorn app.main:app --reload
 ```
 
