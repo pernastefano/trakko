@@ -41,7 +41,7 @@ TRAKKO_PASSWORD=local-test TRAKKO_SECRET_KEY=local-test-key uvicorn app.main:app
 | Format and lint | `ruff format . && ruff check .` |
 | Regenerate the PWA icons | `python scripts/generate_icons.py` |
 
-Run `pytest` and `ruff` before every commit; CI runs the same two checks.
+Run `pytest` and `ruff` before every commit; CI runs the same checks (plus `ruff format --check`).
 
 ## Project layout
 
@@ -91,6 +91,7 @@ change as the behavior (see [CONTRIBUTING.md](../CONTRIBUTING.md)).
 | API | `test_api_tracks.py`, `test_api_event_types.py`, `test_api_entries.py`, `test_stats.py`, `test_data.py`, `test_auth.py` |
 | App shell and PWA | `test_pwa.py`, `test_health.py`, `test_config.py` |
 | Front-end consistency | `test_static_js.py` |
+| Container and workflows | `test_container.py` |
 | Documentation | `test_docs.py` |
 
 API tests use FastAPI's `TestClient` against a temporary SQLite file; the `client_factory` fixture
@@ -113,6 +114,29 @@ The service worker caches the shell and the browser keeps using it between reloa
 static files, reload twice, or unregister it in the browser's developer tools (Application →
 Service Workers, and clear the `trakko-*` caches). The cache name changes whenever a shell file
 changes, so a normal reload is enough in most cases.
+
+## Container image and CI
+
+Docker is not installed on the development machine and must not be run locally: the image is built
+by GitHub Actions only.
+
+| File | Purpose |
+|------|---------|
+| `Dockerfile`, `.dockerignore` | `python:3.12-slim`, non-root user, `/data` volume, runs `alembic upgrade head` and then Uvicorn on port 8000, `HEALTHCHECK` on `/health`. |
+| `.github/workflows/ci.yml` | On pull requests and pushes to `main`: `ruff format --check`, `ruff check` and `pytest` on Python 3.12. |
+| `.github/workflows/docker.yml` | On pushes to `main` and `v*` tags: build, smoke test, then push `linux/amd64` and `linux/arm64` images to `ghcr.io/<owner>/trakko` with the workflow's `GITHUB_TOKEN`. |
+
+Without Docker you can still check what the image needs: it installs only `requirements.txt`, so
+create a clean virtual environment with just that file, copy `alembic.ini`, `alembic/` and `app/`
+next to it, and run the image's command:
+
+```bash
+alembic upgrade head && uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+`tests/test_container.py` guards the rest: every third-party import must be in `requirements.txt`,
+the paths the Dockerfile copies must exist and not be ignored, and the workflow files must keep the
+triggers, permissions and tags the documentation describes.
 
 ## Database
 

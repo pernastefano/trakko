@@ -32,6 +32,13 @@ python3 -c "import secrets; print(secrets.token_urlsafe(48))"
 | `sha-<commit>` | A specific commit. |
 | `1.2.3`, `1.2` | Releases (git tags `v1.2.3`). Prefer a version tag in production. |
 
+The image is built for `linux/amd64` and `linux/arm64` (so it runs on a Raspberry Pi or an ARM
+NAS too) by the **Docker** workflow, on every push to `main` and every `v*` tag. Before publishing,
+the workflow starts the image once and checks migrations, `/health`, the home page, the seeded
+default Track and that it does not run as root. If you fork the repository, the first published
+package is private: change its visibility in the package settings on GitHub to pull it without
+logging in.
+
 ### Docker Compose
 
 ```yaml
@@ -73,9 +80,9 @@ Never put these values in an image, a repository or a public issue.
 
 - **The database** is a single SQLite file, `/data/trakko.db` in the container. Keep `/data` on a
   volume so it survives upgrades and re-creation of the container.
-- The container runs as a non-root user. With a **named volume** this just works; with a **bind
-  mount**, make the host directory writable by the container user (`chown` it, or `chmod 777` it
-  for a quick test only).
+- The container runs as the non-root user `trakko` (uid and gid `10001`). With a **named volume**
+  this just works; with a **bind mount**, make the host directory writable by that user:
+  `sudo chown 10001:10001 /path/to/data`.
 - **Migrations run automatically** every time the container starts (`alembic upgrade head`), so
   upgrading is "pull the new image and start it".
 - **Back up** by copying the database while the app is stopped, or online with SQLite's own tool:

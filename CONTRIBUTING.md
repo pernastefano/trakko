@@ -22,7 +22,8 @@ Follow [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md): Python 3.12, a virtual enviro
 1. Create a branch from `main`: `feature/<short-name>` for features, `fix/<short-name>` for bug
    fixes, `docs/<short-name>` for documentation. `main` must always be deployable.
 2. Make small, focused commits.
-3. Run the checks (CI runs the same):
+3. Run the checks (CI runs them on every pull request; it also verifies that formatting is clean
+   with `ruff format --check .`):
 
    ```bash
    ruff format . && ruff check .
@@ -46,7 +47,7 @@ Do not commit generated or local files: `.venv`, `*.db`, `.env`, backups, `.clau
 
 ## Pull request checklist
 
-- [ ] `ruff format .`, `ruff check .` and `pytest` pass.
+- [ ] `ruff format .`, `ruff check .` and `pytest` pass (the **CI** check is green).
 - [ ] Behavior changes come with tests (API and services should stay well covered). For front-end
       changes, say how you checked them in the browser (phone width, light and dark mode, error and
       offline paths).

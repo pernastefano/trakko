@@ -48,6 +48,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `docs/USER_GUIDE.md`, `docs/DEPLOYMENT.md`, `docs/DEVELOPMENT.md`, `CONTRIBUTING.md`, and a
   complete README (badges, features, container usage, configuration, documentation index).
 - Tests that keep the documentation consistent with the code (links, settings, endpoints, files).
+- Container image: `Dockerfile` (`python:3.12-slim`, non-root user, `/data` volume, migrations on
+  start, health check) and `.dockerignore`.
+- GitHub Actions: `ci.yml` (format check, lint, tests) and `docker.yml` (build, smoke test and push
+  of `linux/amd64` and `linux/arm64` images to GHCR on `main` and `v*` tags).
+- Tests for the Dockerfile, `.dockerignore` and workflows, and a check that every runtime import is
+  listed in `requirements.txt`.
 
 ### Changed
 - API validation messages no longer start with pydantic's "Value error, " prefix.
