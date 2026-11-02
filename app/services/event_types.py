@@ -2,7 +2,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.errors import InvalidError, NotFoundError
-from app.models import Entry, EventType
+from app.models import Entry, EventType, Track
 from app.schemas import EventTypeCreate, EventTypeRead, EventTypeUpdate, check_icon
 from app.services.ordering import apply_order
 from app.services.tracks import get_track
@@ -26,8 +26,13 @@ def _entry_count(session: Session, event_type_id: int) -> int:
     return session.scalar(stmt) or 0
 
 
-def get_event_type(session: Session, event_type_id: int) -> EventType:
-    event_type = session.get(EventType, event_type_id)
+def get_event_type(session: Session, user_id: int, event_type_id: int) -> EventType:
+    """An Event Type of one of this user's Tracks."""
+    event_type = session.scalar(
+        select(EventType)
+        .join(Track, Track.id == EventType.track_id)
+        .where(EventType.id == event_type_id, Track.user_id == user_id)
+    )
     if event_type is None:
         raise NotFoundError("Event type not found")
     return event_type
@@ -42,8 +47,8 @@ def _track_event_types(session: Session, track_id: int) -> list[EventType]:
     return list(session.scalars(stmt))
 
 
-def list_event_types(session: Session, track_id: int) -> list[EventTypeRead]:
-    get_track(session, track_id)
+def list_event_types(session: Session, user_id: int, track_id: int) -> list[EventTypeRead]:
+    get_track(session, user_id, track_id)
     stmt = (
         select(EventType, func.count(Entry.id))
         .outerjoin(Entry, Entry.event_type_id == EventType.id)
@@ -54,8 +59,10 @@ def list_event_types(session: Session, track_id: int) -> list[EventTypeRead]:
     return [_read(event_type, count) for event_type, count in session.execute(stmt)]
 
 
-def create_event_type(session: Session, track_id: int, data: EventTypeCreate) -> EventTypeRead:
-    get_track(session, track_id)
+def create_event_type(
+    session: Session, user_id: int, track_id: int, data: EventTypeCreate
+) -> EventTypeRead:
+    get_track(session, user_id, track_id)
     last_position = session.scalar(
         select(func.max(EventType.position)).where(EventType.track_id == track_id)
     )
@@ -72,8 +79,10 @@ def create_event_type(session: Session, track_id: int, data: EventTypeCreate) ->
     return _read(event_type, 0)
 
 
-def update_event_type(session: Session, event_type_id: int, data: EventTypeUpdate) -> EventTypeRead:
-    event_type = get_event_type(session, event_type_id)
+def update_event_type(
+    session: Session, user_id: int, event_type_id: int, data: EventTypeUpdate
+) -> EventTypeRead:
+    event_type = get_event_type(session, user_id, event_type_id)
     if data.name is not None:
         event_type.name = data.name
     if data.color is not None:
@@ -90,13 +99,15 @@ def update_event_type(session: Session, event_type_id: int, data: EventTypeUpdat
     return _read(event_type, _entry_count(session, event_type.id))
 
 
-def reorder_event_types(session: Session, track_id: int, ids: list[int]) -> list[EventTypeRead]:
-    get_track(session, track_id)
+def reorder_event_types(
+    session: Session, user_id: int, track_id: int, ids: list[int]
+) -> list[EventTypeRead]:
+    get_track(session, user_id, track_id)
     apply_order(_track_event_types(session, track_id), ids, "Event type")
     session.commit()
-    return list_event_types(session, track_id)
+    return list_event_types(session, user_id, track_id)
 
 
-def delete_event_type(session: Session, event_type_id: int) -> None:
-    session.delete(get_event_type(session, event_type_id))
+def delete_event_type(session: Session, user_id: int, event_type_id: int) -> None:
+    session.delete(get_event_type(session, user_id, event_type_id))
     session.commit()

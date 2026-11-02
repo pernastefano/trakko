@@ -103,6 +103,7 @@ def _event_type_stats(
 
 def get_stats(
     session: Session,
+    user_id: int,
     track_id: int,
     period: Period,
     ref: dt.date,
@@ -115,7 +116,7 @@ def get_stats(
     `ref`) as the current day.
     """
     today = today or ref
-    get_track(session, track_id)
+    get_track(session, user_id, track_id)
     event_types = session.scalars(
         select(EventType)
         .where(EventType.track_id == track_id)

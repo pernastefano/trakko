@@ -10,13 +10,12 @@ Docker to develop it.
 docker run -d --name trakko \
   -p 8000:8000 \
   -v trakko-data:/data \
-  -e TRAKKO_PASSWORD='choose-a-password' \
   -e TRAKKO_SECRET_KEY='<a long random value>' \
   --restart unless-stopped \
   ghcr.io/pernastefano/trakko:latest
 ```
 
-Open `http://localhost:8000`. Generate a secret key with:
+Open `http://localhost:8000`, tap **Create an account** and you are in. Generate a secret key with:
 
 ```bash
 python3 -c "import secrets; print(secrets.token_urlsafe(48))"
@@ -47,7 +46,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      TRAKKO_PASSWORD: ${TRAKKO_PASSWORD}
       TRAKKO_SECRET_KEY: ${TRAKKO_SECRET_KEY}
     volumes:
       - trakko-data:/data
@@ -56,7 +54,7 @@ volumes:
   trakko-data:
 ```
 
-Put the two values in an `.env` file next to the compose file (Compose reads it, unlike TRAKKO
+Put the value in an `.env` file next to the compose file (Compose reads it, unlike TRAKKO
 itself) and keep that file out of version control.
 
 If the package is private, log in first: `echo <token> | docker login ghcr.io -u <user>
@@ -69,10 +67,19 @@ All settings are environment variables. TRAKKO does not read `.env` files by its
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TRAKKO_DB_PATH` | `data/trakko.db` (`/data/trakko.db` in the image) | SQLite database file. Its directory is created if missing. |
-| `TRAKKO_PASSWORD` | _(unset)_ | Shared password. **Unset means no authentication at all**, so always set it when the server is reachable from the internet. |
-| `TRAKKO_SECRET_KEY` | _(unset)_ | Key that signs the session cookie. Required when `TRAKKO_PASSWORD` is set; the app refuses to start without it. Changing it signs everyone out. |
+| `TRAKKO_SECRET_KEY` | _(random at every start)_ | Key that signs the session cookies. Set it in production: without it a random key is generated and everyone is signed out whenever the app restarts. Changing it signs everyone out. |
+| `TRAKKO_ALLOW_REGISTRATION` | `true` | Whether new accounts can be created. Set to `false` once your users have registered. It stays possible while no account exists, so a new installation can always create its first user. |
 
 Never put these values in an image, a repository or a public issue.
+
+## Accounts
+
+TRAKKO has accounts: each person registers with a username and a password and only sees their own
+data; several people can share one installation. Usernames and password hashes are stored in the
+same database as the data. There is no email address, so a forgotten password cannot be recovered
+by the application: the person has to create a new account (and import their JSON export). With
+open registration anyone who can reach the address can create an account, so once your users are in,
+close registration by setting `TRAKKO_ALLOW_REGISTRATION=false` and restarting.
 
 ## Data and backups
 
@@ -95,6 +102,11 @@ Never put these values in an image, a repository or a public issue.
   **Import JSON** (which replaces all data).
 
 ## Upgrading
+
+> **Upgrading from a version without accounts (before migration `0002`) deletes all data.**
+> Data created before accounts existed has no owner, so the migration that runs when the container
+> starts removes it. Use **Settings → Export JSON** in the old version first; after the upgrade, create
+> your account and use **Import JSON** to load the file into it.
 
 ```bash
 docker pull ghcr.io/pernastefano/trakko:<version>
@@ -153,8 +165,9 @@ With the proxy on the same host, Uvicorn's default (`127.0.0.1`) already trusts 
 
 ### Brute force
 
-The sign-in endpoint has no built-in attempt limit. For an internet-facing instance use a long
-password and rate-limit `POST /api/v1/auth/login` in the proxy (for example `limit_req` in nginx).
+The application does not limit sign-in or registration attempts. For an internet-facing instance
+rate-limit `POST /api/v1/auth/login` and `POST /api/v1/auth/register` in the proxy (for example
+`limit_req` in nginx), ask users for long passwords, and close registration when it is not needed.
 
 ## Health check
 
@@ -167,7 +180,7 @@ you can point a monitor at it too.
 python3.12 -m venv .venv && . .venv/bin/activate
 pip install -r requirements.txt
 export TRAKKO_DB_PATH=/var/lib/trakko/trakko.db
-export TRAKKO_PASSWORD=... TRAKKO_SECRET_KEY=...
+export TRAKKO_SECRET_KEY=...
 alembic upgrade head
 uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```

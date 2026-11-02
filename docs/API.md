@@ -17,24 +17,32 @@ REST JSON under `/api/v1`. The full, always up-to-date reference is the OpenAPI 
 | 200    | OK                                                                       |
 | 201    | Created                                                                  |
 | 204    | Done, no content (deletes, import, logout)                               |
-| 401    | Authentication required or invalid password                              |
+| 401    | Not signed in, or wrong username or password                             |
+| 403    | Registration is closed                                                   |
 | 404    | Resource not found                                                       |
 | 409    | Conflict (e.g. deleting the only Track)                                  |
 | 422    | Validation error or a rule of the domain was violated                    |
 
 `GET /health` (outside `/api/v1`) returns `{"status": "ok"}`.
 
-## Authentication
+## Accounts and authentication
 
-Disabled unless `TRAKKO_PASSWORD` is set (then `TRAKKO_SECRET_KEY` is required too). When enabled,
-every endpoint except `/health` and `/auth/*` needs the `trakko_session` cookie (HTTP-only,
-`SameSite=Lax`, 30 days, `Secure` over HTTPS).
+Every endpoint except `/health` and `/auth/*` needs a signed-in user: the `trakko_session` cookie
+(HTTP-only, `SameSite=Lax`, 30 days, `Secure` over HTTPS) that registering or signing in sets. All
+data belongs to a user: Tracks, Event Types, Entries, statistics, export and import only ever
+concern the signed-in user's own data, and another user's ids answer `404` as if they did not exist.
 
-| Method | Path           | Description                                                          |
-|--------|----------------|----------------------------------------------------------------------|
-| GET    | `/auth/status` | `{"auth_required": true, "authenticated": false}`                    |
-| POST   | `/auth/login`  | Body `{"password": "..."}`; sets the cookie. 401 if the password is wrong |
-| POST   | `/auth/logout` | Clears the cookie (204)                                              |
+| Method | Path             | Description                                                              |
+|--------|------------------|--------------------------------------------------------------------------|
+| GET    | `/auth/status`   | `{"authenticated": true, "username": "alice", "registration_open": true}` |
+| POST   | `/auth/register` | Body `{"username", "password"}`; creates the account, signs in, adds a default Track (201). 409 if the name is taken, 403 if registration is closed |
+| POST   | `/auth/login`    | Body `{"username", "password"}`; sets the cookie. 401 `Invalid username or password` whichever part is wrong |
+| POST   | `/auth/logout`   | Clears the cookie (204)                                                  |
+
+Usernames are case-insensitive (stored in lowercase), 3 to 32 characters: letters, digits, dots,
+dashes and underscores, starting with a letter or digit. Passwords are 8 to 128 characters and are
+stored as salted `scrypt` hashes. Registration is closed with `TRAKKO_ALLOW_REGISTRATION=false`,
+but stays possible while no account exists so a new installation can always be set up.
 
 ## Tracks
 

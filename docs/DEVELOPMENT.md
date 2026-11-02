@@ -24,11 +24,16 @@ documents the variables. To use it, export them yourself, for example:
 set -a; source .env; set +a
 ```
 
-Run with authentication locally to test the sign-in flow:
+You need an account to use the app: open it and tap **Create an account**. Without
+`TRAKKO_SECRET_KEY` a random key is generated each time the app starts, so `--reload` signs you out;
+set a fixed one while developing:
 
 ```bash
-TRAKKO_PASSWORD=local-test TRAKKO_SECRET_KEY=local-test-key uvicorn app.main:app --reload
+TRAKKO_SECRET_KEY=dev-key uvicorn app.main:app --reload
 ```
+
+`TRAKKO_ALLOW_REGISTRATION=false` closes registration (it stays possible while the database has no
+user).
 
 ## Commands
 
@@ -88,15 +93,17 @@ change as the behavior (see [CONTRIBUTING.md](../CONTRIBUTING.md)).
 | Area | Files |
 |------|-------|
 | Models and migrations | `test_models.py`, `test_migrations.py` |
-| API | `test_api_tracks.py`, `test_api_event_types.py`, `test_api_entries.py`, `test_stats.py`, `test_data.py`, `test_auth.py` |
+| API | `test_api_tracks.py`, `test_api_event_types.py`, `test_api_entries.py`, `test_stats.py`, `test_data.py` |
+| Accounts | `test_auth.py`, `test_multiuser.py` |
 | App shell and PWA | `test_pwa.py`, `test_health.py`, `test_config.py` |
 | Front-end consistency | `test_static_js.py` |
 | Container and workflows | `test_container.py` |
 | Documentation | `test_docs.py` |
 
 API tests use FastAPI's `TestClient` against a temporary SQLite file; the `client_factory` fixture
-in `tests/conftest.py` builds clients with or without a password, and `tests/helpers.py` creates
-Tracks, Event Types and Entries through the API.
+in `tests/conftest.py` builds clients, `sign_in("alice")` gives one signed in as a user (created with
+a cheap password hash and no Track), and `tests/helpers.py` creates Tracks, Event Types and Entries
+through the API. `tests/test_multiuser.py` checks that two users never see each other's data.
 
 There is no JavaScript runtime in the test setup, so the browser code is not executed by `pytest`.
 `tests/test_static_js.py` catches the mistakes that would otherwise only surface in the browser:
@@ -149,6 +156,6 @@ the file and run `alembic upgrade head` again.
 | Symptom | Likely cause |
 |---------|--------------|
 | `no such table` | Run `alembic upgrade head`. |
-| The app exits with `TRAKKO_SECRET_KEY must be set` | `TRAKKO_PASSWORD` is set without a secret key. |
+| You are signed out after every code change | No `TRAKKO_SECRET_KEY`: set one, see above. |
 | A UI change does not show up | The service worker is serving the old shell; see above. |
-| 401 on every request | A password is set and you are not signed in; sign in on `/`. |
+| 401 on every request | You are not signed in; open `/` and sign in or create an account. |

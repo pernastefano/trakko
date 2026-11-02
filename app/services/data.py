@@ -7,9 +7,10 @@ from app.models import Entry, EventType, Track
 from app.schemas import DataEntry, DataEventType, DataFile, DataTrack
 
 
-def export_data(session: Session) -> DataFile:
+def export_data(session: Session, user_id: int) -> DataFile:
     tracks = session.scalars(
         select(Track)
+        .where(Track.user_id == user_id)
         .options(selectinload(Track.event_types).selectinload(EventType.entries))
         .order_by(Track.position, Track.id)
     ).all()
@@ -52,13 +53,16 @@ def _entry_from_data(data: DataEntry) -> Entry:
     return entry
 
 
-def import_data(session: Session, data: DataFile) -> None:
-    """Replace all existing data with the content of `data`, atomically."""
+def import_data(session: Session, user_id: int, data: DataFile) -> None:
+    """Replace all of this user's data with the content of `data`, atomically."""
     try:
-        session.execute(delete(Track))
+        session.execute(delete(Track).where(Track.user_id == user_id))
         for track_position, track_data in enumerate(data.tracks):
             track = Track(
-                name=track_data.name, position=track_position, is_default=track_data.is_default
+                user_id=user_id,
+                name=track_data.name,
+                position=track_position,
+                is_default=track_data.is_default,
             )
             for type_position, type_data in enumerate(track_data.event_types):
                 track.event_types.append(

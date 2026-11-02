@@ -73,7 +73,12 @@ jobs:
             sleep 1
           done
           curl --fail --silent http://127.0.0.1:8000/ > /dev/null
-          curl --fail --silent http://127.0.0.1:8000/api/v1/tracks | grep -q '"is_default":true'
+          # The API needs an account: unauthenticated calls are refused, a new account gets a Track.
+          test "$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:8000/api/v1/tracks)" = "401"
+          curl --fail --silent --cookie-jar /tmp/cookies --header 'Content-Type: application/json' \
+            --data '{"username":"smoke","password":"smoke-test-password"}' \
+            http://127.0.0.1:8000/api/v1/auth/register > /dev/null
+          curl --fail --silent --cookie /tmp/cookies http://127.0.0.1:8000/api/v1/tracks | grep -q '"is_default":true'
           test "$(docker exec trakko-smoke id -u)" != "0"
           docker rm --force trakko-smoke
 

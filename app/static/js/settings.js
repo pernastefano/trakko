@@ -1,7 +1,6 @@
 import {
   createTrack,
   deleteTrack,
-  getAuthStatus,
   listEventTypes,
   listTracks,
   logout,
@@ -78,7 +77,7 @@ export function createSettings() {
   const homeError = document.getElementById("settings-error");
   const newTrackForm = document.getElementById("new-track-form");
   const newTrackName = document.getElementById("new-track-name");
-  const account = document.getElementById("account");
+  const accountName = document.getElementById("account-name");
 
   const trackForm = document.getElementById("track-form");
   const trackNameInput = document.getElementById("track-name-input");
@@ -295,11 +294,10 @@ export function createSettings() {
 
   return {
     /** Call once the user is authenticated; shows the screen the URL points to. */
-    async activate() {
+    activate(username) {
       ready = true;
+      accountName.textContent = username ? `Signed in as ${username}` : "";
       route();
-      const status = await getAuthStatus().catch(() => null);
-      account.hidden = !status?.auth_required;
     },
   };
 }

@@ -26,7 +26,22 @@ TRAKKO server if it does not).
 **Computer (Chrome, Edge)**: click the install icon in the address bar. You can also just use the
 site in a tab; it is laid out as a centered column.
 
-If the server asks for a password, enter it once. You stay signed in on that device for 30 days.
+## Create your account
+
+The first time you open TRAKKO you see the sign-in screen.
+
+1. Tap **Create an account**.
+2. Choose a **username** (3 to 32 letters, digits, dots, dashes or underscores) and a **password**
+   (at least 8 characters), type the password twice, and tap **Create account**.
+3. You are signed in on that device for 30 days, and you start with one Track, "My Track".
+
+Several people can use the same TRAKKO server: each has their own account and sees only their own
+Tracks, entries and statistics. To sign in on another device, use **Sign in** with the same
+username and password. If **Create an account** is not offered, the person running the server has
+closed registration: ask them for access.
+
+There is no email address, so a forgotten password cannot be recovered. Keep your **Export JSON**
+file (see below) so you can start again with a new account if you ever lose access.
 
 ## The screen
 
@@ -35,7 +50,7 @@ If the server asks for a password, enter it once. You stay signed in on that dev
 - **Middle:** the calendar (Home), your statistics, or your settings.
 - **Bottom:** **Home**, **Statistics** and **Settings**.
 
-The app follows your phone's light or dark mode.
+The app is dark (graphite with amber highlights); on a phone set to light mode it switches to a light version of the same colors.
 
 ## Create your Tracks and Event Types
 
@@ -111,7 +126,11 @@ In **Settings → Data**:
   you to confirm first. A file that cannot be read, or that is not a valid TRAKKO export, is
   rejected and nothing changes.
 
-If the server uses a password, **Sign out** is at the bottom of Settings.
+### Account, credits and the project
+
+At the bottom of **Settings**, **Account** shows who is signed in and has **Sign out**; do it when
+you share a device. **About** lists the credits and a link to the project on GitHub
+(https://github.com/pernastefano/trakko).
 
 ## Working offline
 
@@ -125,5 +144,8 @@ offline. Changes cannot be saved offline: try again when you are back online.
 | "Add to Home Screen" is missing on iPhone | Use Safari (not another browser's in-app view). |
 | The calendar shows no markers | Check the Track in the top bar; markers belong to the current Track. |
 | I cannot log anything | The Track has no Event Types yet; add one in Settings. |
-| "Authentication required" or the sign-in form appears | Your session ended; sign in again. |
+| "Authentication required" or the sign-in screen appears | Your session ended; sign in again. |
+| "Invalid username or password" | Check both; usernames ignore capital letters, passwords do not. |
+| "That username is already taken" | Choose another username. |
+| "Registration is closed" | The server does not accept new accounts; ask whoever runs it. |
 | An update does not appear | Close and reopen the app (or reload the page); a new version is fetched in the background and used the next time it opens. |

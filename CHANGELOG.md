@@ -16,8 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - REST API under `/api/v1`: Tracks, Event Types (with entry counts and reordering), Entries
   (filter by Track, Event Type and date range), statistics (counts, weekly/monthly buckets,
   streaks, days since last, average interval, heatmap), JSON export and import.
-- Optional shared-password authentication with a signed, HTTP-only session cookie
-  (`TRAKKO_PASSWORD` + `TRAKKO_SECRET_KEY`).
+- Authentication with a signed, HTTP-only session cookie.
 - API documentation in `docs/API.md`.
 - UI shell: Jinja2 page with the Track selector (arrows, swipe, "n/m" indicator), Home /
   Statistics / Settings navigation bar, sign-in form and an offline banner, in plain CSS
@@ -55,9 +54,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tests for the Dockerfile, `.dockerignore` and workflows, and a check that every runtime import is
   listed in `requirements.txt`.
 
+- **Accounts (multi-user).** Several people can share one installation: register, sign in and sign
+  out with a username and password (`POST /api/v1/auth/register`, `login`, `logout`, and `status`
+  now reports the signed-in user). Tracks, Event Types, Entries, statistics, export and import are
+  per user; other users' resources answer 404. Passwords are stored as salted `scrypt` hashes.
+- `TRAKKO_ALLOW_REGISTRATION` to close registration (always possible while there is no account).
+- Settings: an **Account** section (signed-in user, Sign out) and an **About** section with the
+  credits and a link to the GitHub repository.
+- New dark graphite and amber theme with a light variant for devices set to light mode, new app
+  icons and theme colors.
+
 ### Changed
+- The session cookie now identifies a user (`<user id>.<expiry>.<signature>`); `TRAKKO_SECRET_KEY`
+  is optional (a random key is generated at startup, so sessions end on restart).
+- The default Track is now one per user.
 - Event Type emoji are now picked from a list in a bottom sheet (grouped, filtered to what the
   device can draw) instead of being typed into a text field. The API still accepts any emoji.
 - API validation messages no longer start with pydantic's "Value error, " prefix.
-- The service worker no longer stores copies of `/api/v1/export`; signing out also clears the
-  cached API responses.
+- The service worker no longer stores copies of `/api/v1/export`; signing out and signing in also
+  clear the cached API responses.
+
+### Removed
+- `TRAKKO_PASSWORD` and the shared-password mode: accounts replace it.
+
+### Upgrade notice
+- **Migration `0002` deletes all existing Tracks, Event Types and Entries.** Data created before
+  accounts existed has no owner. Export it from Settings first, then create your account and import
+  the file.

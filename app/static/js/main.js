@@ -37,10 +37,10 @@ function showLoadError(message) {
 async function load() {
   loadError.hidden = true;
   try {
-    await ensureAuthenticated();
+    const status = await ensureAuthenticated();
     app.hidden = false;
     trackSelector.setTracks(await listTracks());
-    settings.activate();
+    settings.activate(status?.username ?? null);
   } catch (error) {
     app.hidden = false;
     showLoadError(error.message || "Could not load your data.");

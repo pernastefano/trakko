@@ -1,3 +1,4 @@
+import logging
 import mimetypes
 
 from fastapi import APIRouter, Depends, FastAPI, Request
@@ -6,12 +7,14 @@ from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
-from app.deps import require_auth
+from app.deps import current_user
 from app.errors import AppError
 from app.routers import auth, data, entries, event_types, pwa, stats, tracks
 from app.services.pwa import STATIC_DIR
 
 API_PREFIX = "/api/v1"
+
+logger = logging.getLogger("uvicorn.error")
 
 mimetypes.add_type("application/manifest+json", ".webmanifest")
 
@@ -34,9 +37,11 @@ def _handle_validation_error(_request: Request, error: RequestValidationError) -
 
 
 def create_app() -> FastAPI:
-    settings = get_settings()
-    if settings.password is not None and settings.secret_key is None:
-        raise RuntimeError("TRAKKO_SECRET_KEY must be set when TRAKKO_PASSWORD is set")
+    if get_settings().secret_key_is_random:
+        logger.warning(
+            "TRAKKO_SECRET_KEY is not set: using a random key, so everyone is signed out "
+            "whenever the app restarts. Set it in production."
+        )
 
     app = FastAPI(title="TRAKKO")
     app.add_exception_handler(AppError, _handle_app_error)
@@ -44,7 +49,8 @@ def create_app() -> FastAPI:
 
     api = APIRouter(prefix=API_PREFIX)
     api.include_router(auth.router)
-    protected = APIRouter(dependencies=[Depends(require_auth)])
+    # Every route in here needs a signed-in user, whatever the endpoint itself asks for.
+    protected = APIRouter(dependencies=[Depends(current_user)])
     for router in (tracks, event_types, entries, stats, data):
         protected.include_router(router.router)
     api.include_router(protected)

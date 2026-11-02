@@ -1,29 +1,32 @@
 :root {
-  --bg: #f3f4f6;
-  --surface: #ffffff;
-  --text: #111827;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --accent: #4f46e5;
-  --accent-text: #ffffff;
-  --danger: #b91c1c;
-  --banner-bg: #fef3c7;
-  --banner-text: #78350f;
+  /* Dark graphite with an amber accent; the light variant below follows the system setting. */
+  color-scheme: dark;
+  --bg: #0e1012;
+  --surface: #181b1f;
+  --text: #ede9e2;
+  --muted: #9b968d;
+  --border: #2b2f34;
+  --accent: #f2a431;
+  --accent-text: #1c1403;
+  --danger: #f28b82;
+  --banner-bg: #3b2a0d;
+  --banner-text: #f6d79b;
   --touch: 44px;
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
   :root {
-    --bg: #030712;
-    --surface: #111827;
-    --text: #f3f4f6;
-    --muted: #9ca3af;
-    --border: #1f2937;
-    --accent: #818cf8;
-    --accent-text: #111827;
-    --danger: #fca5a5;
-    --banner-bg: #78350f;
-    --banner-text: #fef3c7;
+    color-scheme: light;
+    --bg: #ebe8e1;
+    --surface: #f8f6f1;
+    --text: #1e2023;
+    --muted: #66615a;
+    --border: #d9d5cc;
+    --accent: #b45309;
+    --accent-text: #ffffff;
+    --danger: #b42318;
+    --banner-bg: #fdeccb;
+    --banner-text: #6b3a05;
   }
 }
 
@@ -1195,4 +1198,69 @@ input {
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+
+/* Accounts, account and about sections */
+
+.login-form label {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.login-subtitle {
+  margin-bottom: 8px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-hint {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.login-form .text-btn {
+  align-self: center;
+}
+
+.settings-note {
+  color: var(--muted);
+}
+
+.settings-subheading {
+  margin: 8px 0 0;
+  font-size: 0.9375rem;
+}
+
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.credits {
+  margin: 0 0 8px;
+  padding-left: 20px;
+  color: var(--muted);
+}
+
+.credits li + li {
+  margin-top: 4px;
+}
+
+.credits a,
+.about a:not(.link-btn) {
+  color: var(--accent);
+}
+
+.link-btn {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  text-decoration: none;
 }

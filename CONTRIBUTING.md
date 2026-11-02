@@ -70,7 +70,7 @@ Do not commit generated or local files: `.venv`, `*.db`, `.env`, backups, `.clau
 ## Reporting bugs
 
 Include what you did, what you expected, what happened, the browser and device, and whether the
-server uses a password. Please remove any personal data from logs and exported files before
+server has open registration. Please remove any personal data from logs and exported files before
 sharing them.
 
 ## License

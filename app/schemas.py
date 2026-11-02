@@ -247,13 +247,50 @@ class DataFile(BaseModel):
         return self
 
 
-# --- Authentication ---
+# --- Accounts ---
+
+
+USERNAME_PATTERN = re.compile(r"^[a-z0-9][a-z0-9_.-]{2,31}$")
+
+
+def _normalize_username(value: object) -> object:
+    # Names are case-insensitive: store them lowercase.
+    return value.strip().lower() if isinstance(value, str) else value
+
+
+def _check_username(value: str) -> str:
+    if not USERNAME_PATTERN.fullmatch(value):
+        raise ValueError(
+            "must be 3 to 32 characters: letters, digits, dots, dashes or underscores, "
+            "starting with a letter or digit"
+        )
+    return value
+
+
+Username = Annotated[str, BeforeValidator(_normalize_username), AfterValidator(_check_username)]
+
+
+def _check_new_password(value: str) -> str:
+    if not 8 <= len(value) <= 128:
+        raise ValueError("must be 8 to 128 characters")
+    return value
+
+
+NewPassword = Annotated[str, AfterValidator(_check_new_password)]
+
+
+class RegisterRequest(BaseModel):
+    username: Username
+    password: NewPassword
 
 
 class LoginRequest(BaseModel):
-    password: str
+    # Loose limits: a wrong login is answered with the same message whatever the input.
+    username: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)]
+    password: Annotated[str, StringConstraints(min_length=1, max_length=128)]
 
 
 class AuthStatus(BaseModel):
-    auth_required: bool
     authenticated: bool
+    username: str | None = None
+    registration_open: bool

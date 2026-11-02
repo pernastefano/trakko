@@ -10,23 +10,42 @@ def utcnow() -> dt.datetime:
     return dt.datetime.now(dt.UTC)
 
 
+class User(Base):
+    __tablename__ = "users"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(String(32), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(255))
+    created_at: Mapped[dt.datetime] = mapped_column(default=utcnow)
+
+    tracks: Mapped[list["Track"]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+        order_by="Track.position",
+    )
+
+
 class Track(Base):
     __tablename__ = "tracks"
     __table_args__ = (
-        # At most one default Track; "exactly one" is enforced by the service layer.
+        # At most one default Track per user; "exactly one" is enforced by the service layer.
         Index(
-            "uq_tracks_single_default",
-            "is_default",
+            "uq_tracks_one_default_per_user",
+            "user_id",
             unique=True,
             sqlite_where=text("is_default = 1"),
         ),
+        Index("ix_tracks_user_id", "user_id"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     name: Mapped[str] = mapped_column(String(100))
     position: Mapped[int] = mapped_column(default=0, server_default="0")
     is_default: Mapped[bool] = mapped_column(default=False, server_default="0")
 
+    user: Mapped[User] = relationship(back_populates="tracks")
     event_types: Mapped[list["EventType"]] = relationship(
         back_populates="track",
         cascade="all, delete-orphan",

@@ -43,8 +43,21 @@ export function getAuthStatus() {
   return request("GET", "/auth/status");
 }
 
-export function login(password) {
-  return request("POST", "/auth/login", { password });
+/** Forget cached API responses, so another account on this device never sees them offline. */
+async function clearApiCache() {
+  if ("caches" in window) await caches.delete(API_CACHE_NAME);
+}
+
+export async function login(username, password) {
+  const status = await request("POST", "/auth/login", { username, password });
+  await clearApiCache();
+  return status;
+}
+
+export async function register(username, password) {
+  const status = await request("POST", "/auth/register", { username, password });
+  await clearApiCache();
+  return status;
 }
 
 export function listTracks() {
@@ -116,8 +129,7 @@ export function importData(document) {
 
 export async function logout() {
   await request("POST", "/auth/logout");
-  // Do not leave the signed-in user's data in the offline cache.
-  if ("caches" in window) await caches.delete(API_CACHE_NAME);
+  await clearApiCache();
 }
 
 /** Statistics for a Track: `ref` anchors the month/year, `today` is the current day. */

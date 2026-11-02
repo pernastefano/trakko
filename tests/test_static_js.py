@@ -241,3 +241,69 @@ def test_emoji_are_picked_not_typed() -> None:
     # For the emoji kind the value comes from the picker, never from the text input.
     assert 'if (kind === "emoji") return state.emoji;' in editor
     assert "emojiPicker.choose" in editor
+
+
+# --- accounts, about and credits ---
+
+REPOSITORY = "https://github.com/pernastefano/trakko"
+
+
+def test_sign_in_form_markup() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    for control in (
+        "login-username",
+        "login-password",
+        "login-password-confirm",
+        "login-submit",
+        "login-switch",
+        "login-hint",
+    ):
+        assert f'id="{control}"' in html, control
+    assert 'autocomplete="username"' in html
+    assert 'autocomplete="new-password"' in html
+    # Creating an account asks for the password twice; signing in does not.
+    assert re.search(r'id="login-confirm-field" class="login-field" hidden', html)
+
+
+def test_the_form_follows_the_api_limits() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    assert 'id="login-username" name="username" type="text"' in html and 'maxlength="32"' in html
+    assert 'maxlength="128"' in html
+
+
+def test_settings_show_the_account_and_the_credits() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    for control in ("account-name", "logout-button", "about", "github-link"):
+        assert f'id="{control}"' in html, control
+    assert "Credits" in html
+    assert f'id="github-link" class="secondary-btn link-btn" href="{REPOSITORY}"' in html
+
+
+def test_external_links_do_not_leak_the_opener() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    for link in re.findall(r"<a [^>]*href=\"https?://[^\"]+\"[^>]*>", html):
+        assert 'target="_blank"' in link and "noopener" in link, link
+
+
+def test_the_repository_link_matches_the_documentation() -> None:
+    readme = (TEMPLATES_DIR.parent.parent / "README.md").read_text()
+
+    assert "github.com/pernastefano/trakko" in readme
+
+
+def test_the_signed_in_user_is_passed_to_settings() -> None:
+    main = (JS_DIR / "main.js").read_text()
+    settings = (JS_DIR / "settings.js").read_text()
+
+    assert "settings.activate(status?.username ?? null)" in main
+    assert "activate(username)" in settings
+
+
+def test_page_script_clears_cached_data_when_the_account_changes() -> None:
+    api = (JS_DIR / "api.js").read_text()
+
+    assert api.count("await clearApiCache();") == 3  # sign in, register, sign out

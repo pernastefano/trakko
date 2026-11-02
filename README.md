@@ -8,7 +8,8 @@ A mobile-first Progressive Web App to track daily events.
 
 Define **Tracks** (for example "Menstrual Cycle" or "Workout"), give each its own **Event Types**
 ("Cycle Start", "Ovulation", "Running", "Gym"), and log **Entries** on a calendar with an optional
-short note. Single-user, self-hosted, one SQLite file, no accounts and no cloud.
+short note. Self-hosted, one SQLite file, no cloud. Several people can share one installation,
+each with their own account and their own data.
 
 <!-- Screenshots: add images of the Home calendar, the day editor and Statistics here. -->
 > Screenshots: _coming soon_.
@@ -26,10 +27,12 @@ short note. Single-user, self-hosted, one SQLite file, no accounts and no cloud.
   streak, days since the last entry, average interval, entries per week or month, and an activity
   heatmap, drawn as inline SVG.
 - **Export and import** all data as JSON.
-- **Installable PWA:** manifest, icons, iOS support, safe-area insets, light and dark mode, and an
-  app shell that opens offline (changes need a connection).
+- **Installable PWA:** manifest, icons, iOS support, safe-area insets, a dark graphite and amber
+  theme (with a light variant for devices set to light mode), and an app shell that opens offline
+  (changes need a connection).
 - **REST API** under `/api/v1` with OpenAPI docs at `/docs`.
-- Optional **shared-password** protection.
+- **Accounts:** sign up, sign in and sign out; many users can share one installation and nobody
+  sees anybody else's data. Registration can be switched off.
 
 ## Quick start (local)
 
@@ -50,12 +53,12 @@ The image is built by GitHub Actions and published to the GitHub Container Regis
 
 ```bash
 docker run -d --name trakko -p 8000:8000 -v trakko-data:/data \
-  -e TRAKKO_PASSWORD='choose-a-password' \
   -e TRAKKO_SECRET_KEY='<a long random value>' \
   ghcr.io/pernastefano/trakko:latest
 ```
 
-Keep `/data` on a volume. Production needs HTTPS behind a reverse proxy; see
+Open it, tap **Create an account** and you are in. Keep `/data` on a volume. Production needs HTTPS
+behind a reverse proxy; see
 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Configuration
@@ -66,8 +69,8 @@ read `.env` files itself).
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `TRAKKO_DB_PATH` | `data/trakko.db` (`/data/trakko.db` in the image) | Path of the SQLite database file. |
-| `TRAKKO_PASSWORD` | _(unset)_ | Shared password. When unset the app runs without authentication, for local use only. |
-| `TRAKKO_SECRET_KEY` | _(unset)_ | Secret used to sign session cookies. Required when `TRAKKO_PASSWORD` is set (the app refuses to start without it). |
+| `TRAKKO_SECRET_KEY` | _(random at every start)_ | Secret used to sign session cookies. Set it in production; without it a random key is generated and everyone is signed out whenever the app restarts. |
+| `TRAKKO_ALLOW_REGISTRATION` | `true` | Whether new accounts can be created. Set to `false` once everyone has registered (it stays possible while no account exists). |
 
 ## Documentation
 

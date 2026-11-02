@@ -2,12 +2,21 @@
 
 {% block body %}
 <section id="login" class="login" aria-labelledby="login-title" hidden>
-  <form id="login-form" class="login-form" autocomplete="on">
+  <form id="login-form" class="login-form">
     <h1 id="login-title">TRAKKO</h1>
+    <p id="login-subtitle" class="login-subtitle"></p>
+    <label for="login-username">Username</label>
+    <input id="login-username" name="username" type="text" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="32" required>
     <label for="login-password">Password</label>
-    <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+    <input id="login-password" name="password" type="password" autocomplete="current-password" maxlength="128" required>
+    <div id="login-confirm-field" class="login-field" hidden>
+      <label for="login-password-confirm">Confirm password</label>
+      <input id="login-password-confirm" type="password" autocomplete="new-password" maxlength="128">
+    </div>
+    <p id="login-hint" class="login-hint" hidden>Username: 3 to 32 letters, digits, dots, dashes or underscores. Password: at least 8 characters.</p>
     <p id="login-error" class="form-error" role="alert" hidden></p>
-    <button type="submit" class="primary-btn">Sign in</button>
+    <button id="login-submit" type="submit" class="primary-btn"></button>
+    <button id="login-switch" type="button" class="text-btn" hidden></button>
   </form>
 </section>
 
@@ -88,9 +97,22 @@
         </div>
         <p id="data-status" class="settings-status" role="status" hidden></p>
 
-        <div id="account" hidden>
-          <h2 class="settings-heading">Account</h2>
+        <h2 class="settings-heading">Account</h2>
+        <p id="account-name" class="settings-note"></p>
+        <div class="settings-actions">
           <button id="logout-button" type="button" class="secondary-btn">Sign out</button>
+        </div>
+
+        <h2 class="settings-heading">About</h2>
+        <div id="about" class="about">
+          <p>TRAKKO is a simple tracker for the things that happen in your days.</p>
+          <h3 class="settings-subheading">Credits</h3>
+          <ul class="credits">
+            <li>Created by <a href="https://github.com/pernastefano" target="_blank" rel="noopener noreferrer">pernastefano</a>.</li>
+            <li>Built with FastAPI, SQLAlchemy, Alembic, Pydantic and Jinja2, and plain JavaScript.</li>
+            <li>Free and open source software, released under the MIT license.</li>
+          </ul>
+          <a id="github-link" class="secondary-btn link-btn" href="https://github.com/pernastefano/trakko" target="_blank" rel="noopener noreferrer">View the project on GitHub</a>
         </div>
       </div>
 

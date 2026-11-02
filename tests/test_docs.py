@@ -93,10 +93,21 @@ def test_every_setting_is_documented_everywhere() -> None:
             assert setting in text, f"{setting} missing from {name}"
 
 
+# Settings that no longer exist; only the changelog may mention them, to say they were removed.
+REMOVED_SETTINGS = {"TRAKKO_PASSWORD"}
+
+
 @pytest.mark.parametrize("path", MARKDOWN_FILES, ids=ids)
 def test_docs_do_not_mention_unknown_settings(path: Path) -> None:
     mentioned = set(re.findall(r"\bTRAKKO_[A-Z_]+\b", path.read_text()))
-    assert mentioned <= settings_in_code(), f"{ids(path)}: {mentioned - settings_in_code()}"
+    allowed = settings_in_code() | (REMOVED_SETTINGS if path.name == "CHANGELOG.md" else set())
+    assert mentioned <= allowed, f"{ids(path)}: {mentioned - allowed}"
+
+
+def test_removed_settings_are_gone_from_the_code_and_the_example_file() -> None:
+    code = (ROOT / "app" / "config.py").read_text() + (ROOT / ".env.example").read_text()
+    for name in REMOVED_SETTINGS:
+        assert name not in code
 
 
 # --- files and modules mentioned ---
@@ -143,7 +154,7 @@ def test_every_endpoint_in_the_api_tables_exists() -> None:
         (DOCS / "API.md").read_text(),
         re.M,
     )
-    assert len(rows) == 19, "the API tables were not parsed as expected"
+    assert len(rows) == 20, "the API tables were not parsed as expected"
     operations = openapi_operations()
     for method, path in rows:
         assert (method, normalized(path)) in operations, f"API.md documents {method} {path}"

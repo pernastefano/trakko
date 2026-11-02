@@ -20,3 +20,7 @@ class ConflictError(AppError):
 
 class InvalidError(AppError):
     status_code = 422
+
+
+class ForbiddenError(AppError):
+    status_code = 403
