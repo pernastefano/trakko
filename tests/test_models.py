@@ -1,23 +1,11 @@
 import datetime as dt
-from collections.abc import Iterator
-from pathlib import Path
 
 import pytest
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
-from app.db import Base, make_engine, sqlite_url
 from app.models import Entry, EventType, Track
-
-
-@pytest.fixture
-def session(tmp_path: Path) -> Iterator[Session]:
-    engine = make_engine(sqlite_url(str(tmp_path / "test.db")))
-    Base.metadata.create_all(engine)
-    with Session(engine) as session:
-        yield session
-    engine.dispose()
 
 
 def make_track(name: str = "Workout", *, is_default: bool = False) -> Track:

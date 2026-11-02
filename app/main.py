@@ -1,8 +1,47 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, Depends, FastAPI, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+
+from app.config import get_settings
+from app.deps import require_auth
+from app.errors import AppError
+from app.routers import auth, data, entries, event_types, stats, tracks
+
+API_PREFIX = "/api/v1"
+
+
+def _validation_detail(error: RequestValidationError) -> str:
+    messages = []
+    for item in error.errors():
+        location = ".".join(str(part) for part in item["loc"] if part not in ("body", "query"))
+        messages.append(f"{location}: {item['msg']}" if location else item["msg"])
+    return "; ".join(messages)
+
+
+def _handle_app_error(_request: Request, error: AppError) -> JSONResponse:
+    return JSONResponse({"detail": error.detail}, status_code=error.status_code)
+
+
+def _handle_validation_error(_request: Request, error: RequestValidationError) -> JSONResponse:
+    return JSONResponse({"detail": _validation_detail(error)}, status_code=422)
 
 
 def create_app() -> FastAPI:
+    settings = get_settings()
+    if settings.password is not None and settings.secret_key is None:
+        raise RuntimeError("TRAKKO_SECRET_KEY must be set when TRAKKO_PASSWORD is set")
+
     app = FastAPI(title="TRAKKO")
+    app.add_exception_handler(AppError, _handle_app_error)
+    app.add_exception_handler(RequestValidationError, _handle_validation_error)
+
+    api = APIRouter(prefix=API_PREFIX)
+    api.include_router(auth.router)
+    protected = APIRouter(dependencies=[Depends(require_auth)])
+    for router in (tracks, event_types, entries, stats, data):
+        protected.include_router(router.router)
+    api.include_router(protected)
+    app.include_router(api)
 
     @app.get("/health", include_in_schema=False)
     def health() -> dict[str, str]:
