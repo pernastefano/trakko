@@ -16,8 +16,10 @@ and log **Entries** on a calendar with an optional short note.
   the arrows to change period, "Today" to jump back, today highlighted, and colored markers/icons
   for the entries of the current Track.
 - REST API for Tracks, Event Types, Entries, statistics and JSON export/import.
+- Day editor (bottom sheet): tap a day, tap an event type, Save. Add an optional note, tap an
+  existing entry to change its type or note, or delete it.
 
-The day editor, settings and statistics screens are still to come.
+The settings and statistics screens are still to come.
 
 ## Quick start (local)
 

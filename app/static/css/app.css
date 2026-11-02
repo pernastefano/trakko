@@ -517,3 +517,224 @@ input {
   font-size: 0.875rem;
   overflow-wrap: anywhere;
 }
+
+/* Day editor (bottom sheet) */
+
+.sheet {
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  max-height: 90dvh;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  border-radius: 16px 16px 0 0;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.sheet[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+.sheet::backdrop {
+  background: rgb(0 0 0 / 50%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sheet[open] {
+    animation: sheet-in 160ms ease-out;
+  }
+
+  @keyframes sheet-in {
+    from {
+      transform: translateY(24px);
+      opacity: 0;
+    }
+  }
+}
+
+.sheet-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px 8px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1.0625rem;
+}
+
+.sheet-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+}
+
+.editor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.editor-list:empty {
+  display: none;
+}
+
+.editor-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  width: 100%;
+  min-height: var(--touch);
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.editor-entry.is-editing {
+  border-color: var(--accent);
+  background: var(--bg);
+}
+
+.editor-entry .marker {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+.editor-entry-name {
+  font-weight: 600;
+}
+
+.editor-entry-note {
+  flex-basis: 100%;
+  padding-left: 32px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.editor-empty {
+  color: var(--muted);
+}
+
+.editor-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editor-form-title {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.editor-types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.editor-types legend {
+  margin-bottom: 8px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.chip {
+  position: relative;
+}
+
+.chip-input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.chip-body {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--touch);
+  padding: 0 14px 0 10px;
+  border: 2px solid var(--border);
+  border-radius: 22px;
+}
+
+.chip-body .marker {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+.chip-input:checked + .chip-body {
+  border-color: var(--accent);
+  background: var(--bg);
+  font-weight: 600;
+}
+
+.chip-input:focus-visible + .chip-body {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.editor-note {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  resize: vertical;
+}
+
+.editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.editor-actions .danger-btn {
+  margin-right: auto;
+}
+
+.danger-btn {
+  min-height: var(--touch);
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  color: var(--danger);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}

@@ -13,33 +13,11 @@ import {
   weekDays,
   weekdayName,
 } from "./dates.js";
+import { element } from "./dom.js";
+import { createMarker } from "./markers.js";
 import { onSwipe } from "./swipe.js";
 
 const MONTH_MARKER_SLOTS = 3;
-
-function element(tag, className, text) {
-  const node = document.createElement(tag);
-  if (className) node.className = className;
-  if (text !== undefined) node.textContent = text;
-  return node;
-}
-
-function readableTextColor(hex) {
-  const value = parseInt(hex.slice(1), 16);
-  const red = (value >> 16) & 255;
-  const green = (value >> 8) & 255;
-  const blue = value & 255;
-  return (0.299 * red + 0.587 * green + 0.114 * blue) / 255 > 0.6 ? "#111827" : "#ffffff";
-}
-
-function createMarker(eventType) {
-  const marker = element("span", "marker");
-  marker.style.backgroundColor = eventType.color;
-  marker.style.color = readableTextColor(eventType.color);
-  if (eventType.icon_kind !== "none") marker.textContent = eventType.icon_value;
-  marker.setAttribute("aria-hidden", "true");
-  return marker;
-}
 
 /**
  * Calendar with Day, Week and Month views for one Track at a time.

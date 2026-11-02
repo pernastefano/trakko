@@ -9,6 +9,7 @@ from pathlib import Path
 
 import pytest
 
+from app.schemas import NOTE_MAX_LENGTH
 from app.services.pwa import STATIC_DIR, TEMPLATES_DIR
 
 JS_DIR = STATIC_DIR / "js"
@@ -76,3 +77,23 @@ def test_view_switcher_does_not_collide_with_calendar_markup() -> None:
     html = (TEMPLATES_DIR / "index.html").read_text()
 
     assert sorted(re.findall(r'data-view="(\w+)"', html)) == ["home", "settings", "stats"]
+
+
+def test_day_editor_markup() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    assert '<dialog id="day-editor" class="sheet" aria-labelledby="editor-title">' in html
+    # The textarea limit must follow the API's note limit.
+    assert f'maxlength="{NOTE_MAX_LENGTH}"' in html
+    for control in ("editor-save", "editor-delete", "editor-cancel", "editor-close", "editor-form"):
+        assert f'id="{control}"' in html
+    assert re.search(r'<button id="editor-save" type="submit"[^>]*\bdisabled\b', html)
+    assert re.search(r'<button id="editor-delete" type="button"[^>]*\bhidden\b', html)
+
+
+def test_editor_listens_to_the_event_the_calendar_dispatches() -> None:
+    calendar = (JS_DIR / "calendar.js").read_text()
+    editor = (JS_DIR / "editor.js").read_text()
+
+    assert 'new CustomEvent("trakko:day-tap"' in calendar
+    assert 'addEventListener("trakko:day-tap"' in editor

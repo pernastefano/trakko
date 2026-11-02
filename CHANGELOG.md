@@ -31,4 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   swipe/arrow navigation, "Today" button, today highlight and per-Track entry markers (icon or
   color dot, "+n" when a month cell has more than three). Tapping a day dispatches a
   `trakko:day-tap` event for the day editor.
-- Static consistency tests for the JavaScript modules (imports, element ids).
+- Day editor: bottom sheet (native `<dialog>`) opened by tapping a day in any view. It lists the
+  day's entries for the current Track and adds, edits (type, note) and deletes entries; Save and
+  Delete close the sheet and refresh the calendar.
+- Static consistency tests for the JavaScript modules (imports, element ids, editor markup).

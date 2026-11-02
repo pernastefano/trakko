@@ -76,5 +76,37 @@
       <span>Settings</span>
     </a>
   </nav>
+
+  <dialog id="day-editor" class="sheet" aria-labelledby="editor-title">
+    <div class="sheet-header">
+      <h2 id="editor-title" class="sheet-title"></h2>
+      <button id="editor-close" type="button" class="icon-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <ul id="editor-entries" class="editor-list" aria-label="Entries of the day"></ul>
+
+      <p id="editor-no-types" class="editor-empty" hidden>
+        This Track has no event types yet. Add some in
+        <a id="editor-settings-link" href="#/settings">Settings</a>.
+      </p>
+
+      <form id="editor-form" class="editor-form">
+        <h3 id="editor-form-title" class="editor-form-title">Add entry</h3>
+        <fieldset id="editor-types" class="editor-types">
+          <legend>Event type</legend>
+        </fieldset>
+        <label for="editor-note">Note (optional)</label>
+        <textarea id="editor-note" class="editor-note" rows="2" maxlength="280"></textarea>
+        <p id="editor-error" class="form-error" role="alert" hidden></p>
+        <div class="editor-actions">
+          <button id="editor-delete" type="button" class="danger-btn" hidden>Delete</button>
+          <button id="editor-cancel" type="button" class="text-btn" hidden>Cancel</button>
+          <button id="editor-save" type="submit" class="primary-btn" disabled>Save</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 </div>
 {% endblock %}

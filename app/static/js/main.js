@@ -1,6 +1,7 @@
 import { listTracks } from "./api.js";
 import { ensureAuthenticated } from "./auth.js";
 import { createCalendar } from "./calendar.js";
+import { createDayEditor } from "./editor.js";
 import { initOfflineBanner } from "./offline.js";
 import { registerServiceWorker } from "./pwa.js";
 import { createTrackSelector } from "./tracks.js";
@@ -11,6 +12,7 @@ const loadError = document.getElementById("load-error");
 const loadErrorMessage = document.getElementById("load-error-message");
 const calendar = createCalendar();
 const trackSelector = createTrackSelector({ onChange: (track) => calendar.setTrack(track) });
+createDayEditor({ currentTrack: trackSelector.current, onChange: calendar.refresh });
 
 function showLoadError(message) {
   loadErrorMessage.textContent = message;

@@ -58,3 +58,15 @@ export function listEntries({ trackId, from, to }) {
   const query = new URLSearchParams({ track_id: trackId, from, to });
   return request("GET", `/entries?${query}`);
 }
+
+export function createEntry(data) {
+  return request("POST", "/entries", data);
+}
+
+export function updateEntry(id, data) {
+  return request("PATCH", `/entries/${id}`, data);
+}
+
+export function deleteEntry(id) {
+  return request("DELETE", `/entries/${id}`);
+}
