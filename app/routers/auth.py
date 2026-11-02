@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Request, Response
 
-from app.deps import SessionDep, SettingsDep, session_user
+from app.deps import CurrentUser, SessionDep, SettingsDep, session_user
 from app.models import User
-from app.schemas import AuthStatus, LoginRequest, RegisterRequest
+from app.schemas import AuthStatus, ChangePasswordRequest, LoginRequest, RegisterRequest
 from app.services import auth, users
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -19,7 +19,7 @@ def _status(session: SessionDep, settings: SettingsDep, user: User | None) -> Au
 def _sign_in(request: Request, response: Response, settings: SettingsDep, user: User) -> None:
     response.set_cookie(
         auth.COOKIE_NAME,
-        auth.create_token(settings.secret_key, user.id),
+        auth.create_token(settings.secret_key, user.id, user.password_hash),
         max_age=auth.SESSION_SECONDS,
         httponly=True,
         samesite="lax",
@@ -56,6 +56,20 @@ def login(
     user = users.authenticate(session, data.username, data.password)
     _sign_in(request, response, settings, user)
     return _status(session, settings, user)
+
+
+@router.post("/password", status_code=204)
+def change_password(
+    data: ChangePasswordRequest,
+    request: Request,
+    response: Response,
+    session: SessionDep,
+    settings: SettingsDep,
+    user: CurrentUser,
+) -> None:
+    users.change_password(session, user, data.current_password, data.new_password)
+    # The old cookie is now invalid everywhere; give this device a new one so it stays signed in.
+    _sign_in(request, response, settings, user)
 
 
 @router.post("/logout", status_code=204)

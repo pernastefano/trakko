@@ -18,7 +18,7 @@ REST JSON under `/api/v1`. The full, always up-to-date reference is the OpenAPI 
 | 201    | Created                                                                  |
 | 204    | Done, no content (deletes, import, logout)                               |
 | 401    | Not signed in, or wrong username or password                             |
-| 403    | Registration is closed                                                   |
+| 403    | Registration is closed, or the current password is wrong                 |
 | 404    | Resource not found                                                       |
 | 409    | Conflict (e.g. deleting the only Track)                                  |
 | 422    | Validation error or a rule of the domain was violated                    |
@@ -37,6 +37,7 @@ concern the signed-in user's own data, and another user's ids answer `404` as if
 | GET    | `/auth/status`   | `{"authenticated": true, "username": "alice", "registration_open": true}` |
 | POST   | `/auth/register` | Body `{"username", "password"}`; creates the account, signs in, adds a default Track (201). 409 if the name is taken, 403 if registration is closed |
 | POST   | `/auth/login`    | Body `{"username", "password"}`; sets the cookie. 401 `Invalid username or password` whichever part is wrong |
+| POST   | `/auth/password` | Body `{"current_password", "new_password"}` (204). 403 if the current password is wrong, 422 if the new one is invalid or equal to the old one. Ends the user's other sessions and renews this cookie |
 | POST   | `/auth/logout`   | Clears the cookie (204)                                                  |
 
 Usernames are case-insensitive (stored in lowercase), 3 to 32 characters: letters, digits, dots,

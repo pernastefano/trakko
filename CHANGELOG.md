@@ -64,7 +64,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - New dark graphite and amber theme with a light variant for devices set to light mode, new app
   icons and theme colors.
 
+- **Themes.** Settings → Appearance: Automatic, Graphite, Midnight, Forest, Ember (dark), Paper and
+  Sand (light). The choice is saved per device and applied before the page is drawn.
+- **Change password** (Settings → Account, `POST /api/v1/auth/password`). It asks for the current
+  password and ends the user's other sessions.
+
 ### Changed
+- The session cookie now also carries a fingerprint of the user's password hash, so a password
+  change invalidates the old cookies.
+- Credits now show only Stefano Perna, linking to the GitHub repository; the About text and the
+  separate GitHub button are gone.
+- The iOS status bar style is `black`, which stays readable with both dark and light themes.
 - The session cookie now identifies a user (`<user id>.<expiry>.<signature>`); `TRAKKO_SECRET_KEY`
   is optional (a random key is generated at startup, so sessions end on restart).
 - The default Track is now one per user.

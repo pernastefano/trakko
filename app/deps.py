@@ -1,3 +1,4 @@
+import hmac
 from typing import Annotated
 
 from fastapi import Depends, Request
@@ -16,8 +17,16 @@ SettingsDep = Annotated[Settings, Depends(get_settings)]
 def session_user(request: Request, session: Session, settings: Settings) -> User | None:
     """The signed-in user for this request, or None."""
     token = request.cookies.get(auth.COOKIE_NAME)
-    user_id = auth.verify_token(settings.secret_key, token) if token else None
-    return users.get_user(session, user_id) if user_id is not None else None
+    claims = auth.parse_token(settings.secret_key, token) if token else None
+    if claims is None:
+        return None
+    user_id, token_fingerprint = claims
+    user = users.get_user(session, user_id)
+    if user is None:
+        return None
+    current = auth.fingerprint(settings.secret_key, user.password_hash)
+    # A token issued before the last password change no longer counts.
+    return user if hmac.compare_digest(token_fingerprint, current) else None
 
 
 def current_user(request: Request, session: SessionDep, settings: SettingsDep) -> User:

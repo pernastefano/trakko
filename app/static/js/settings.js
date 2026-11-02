@@ -12,6 +12,7 @@ import { confirmAction } from "./confirm.js";
 import { initDataTransfer } from "./data-transfer.js";
 import { element, icon } from "./dom.js";
 import { createMarker } from "./markers.js";
+import { createPasswordDialog } from "./password.js";
 import { createTypeEditor } from "./type-editor.js";
 
 const ICON_UP = "M5 15l7-7 7 7";
@@ -78,6 +79,7 @@ export function createSettings() {
   const newTrackForm = document.getElementById("new-track-form");
   const newTrackName = document.getElementById("new-track-name");
   const accountName = document.getElementById("account-name");
+  const accountStatus = document.getElementById("account-status");
 
   const trackForm = document.getElementById("track-form");
   const trackNameInput = document.getElementById("track-name-input");
@@ -280,6 +282,17 @@ export function createSettings() {
     if (match[1]) showTrack(Number(match[1]), token);
     else showHome(token);
   }
+
+  const passwordDialog = createPasswordDialog({
+    onChanged() {
+      accountStatus.textContent = "Password changed.";
+      accountStatus.hidden = false;
+    },
+  });
+  document.getElementById("change-password-button").addEventListener("click", () => {
+    accountStatus.hidden = true;
+    passwordDialog.open();
+  });
 
   document.getElementById("logout-button").addEventListener("click", async () => {
     try {

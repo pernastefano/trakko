@@ -290,6 +290,11 @@ class LoginRequest(BaseModel):
     password: Annotated[str, StringConstraints(min_length=1, max_length=128)]
 
 
+class ChangePasswordRequest(BaseModel):
+    current_password: Annotated[str, StringConstraints(min_length=1, max_length=128)]
+    new_password: NewPassword
+
+
 class AuthStatus(BaseModel):
     authenticated: bool
     username: str | None = None

@@ -1,5 +1,6 @@
 import { listTracks } from "./api.js";
 import { ensureAuthenticated } from "./auth.js";
+import { initAppearance } from "./appearance.js";
 import { createCalendar } from "./calendar.js";
 import { createDayEditor } from "./editor.js";
 import { initOfflineBanner } from "./offline.js";
@@ -56,6 +57,7 @@ window.addEventListener("trakko:data-changed", async () => {
   }
 });
 
+initAppearance();
 initOfflineBanner();
 initViews();
 document.getElementById("load-retry").addEventListener("click", load);

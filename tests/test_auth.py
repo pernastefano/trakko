@@ -180,15 +180,17 @@ def test_login_after_logout_works(client: TestClient) -> None:
 
 
 def test_forged_and_tampered_cookies_are_rejected(client: TestClient) -> None:
-    token = auth.create_token(KEY, 1)
-    user_id, expires, signature = token.split(".")
+    token = auth.create_token(KEY, 1, "some-hash")
+    user_id, expires, token_fingerprint, signature = token.split(".")
     forged = [
         "garbage",
         "",
         "1.",
-        f"1.{expires}.",
-        f"2.{expires}.{signature}",  # someone else's id, same signature
-        f"{user_id}.9999999999.{signature}",  # later expiry, same signature
+        "1.2.3",
+        f"1.{expires}.{token_fingerprint}.",
+        f"2.{expires}.{token_fingerprint}.{signature}",  # someone else's id, same signature
+        f"{user_id}.9999999999.{token_fingerprint}.{signature}",  # later expiry, same signature
+        f"{user_id}.{expires}.{'0' * 16}.{signature}",  # other fingerprint, same signature
         token + "0",
     ]
     for value in forged:
@@ -197,7 +199,18 @@ def test_forged_and_tampered_cookies_are_rejected(client: TestClient) -> None:
 
 
 def test_cookie_signed_with_another_key_is_rejected(client: TestClient) -> None:
-    client.cookies.set(auth.COOKIE_NAME, auth.create_token("some-other-key", 1))
+    client.cookies.set(auth.COOKIE_NAME, auth.create_token("some-other-key", 1, "some-hash"))
+
+    assert client.get(f"{API}/tracks").status_code == 401
+
+
+def test_a_genuine_token_for_an_old_password_is_rejected(
+    client: TestClient, engine: Engine
+) -> None:
+    with Session(engine) as session:
+        user = session.scalar(select(User))
+        stale = auth.create_token(KEY, user.id, "the-hash-before-the-password-changed")
+    client.cookies.set(auth.COOKIE_NAME, stale)
 
     assert client.get(f"{API}/tracks").status_code == 401
 
@@ -210,12 +223,21 @@ def test_cookie_of_a_deleted_user_is_rejected(client: TestClient, engine: Engine
     assert client.get(f"{API}/tracks").status_code == 401
 
 
-def test_token_carries_the_user_and_expires() -> None:
-    token = auth.create_token(KEY, 42, now=1_000)
+def test_token_carries_the_user_and_the_password_fingerprint_and_expires() -> None:
+    token = auth.create_token(KEY, 42, "hash-a", now=1_000)
+    expected = (42, auth.fingerprint(KEY, "hash-a"))
 
-    assert auth.verify_token(KEY, token, now=1_000 + auth.SESSION_SECONDS - 1) == 42
-    assert auth.verify_token(KEY, token, now=1_000 + auth.SESSION_SECONDS) is None
-    assert auth.verify_token("another key", token, now=1_000) is None
+    assert auth.parse_token(KEY, token, now=1_000 + auth.SESSION_SECONDS - 1) == expected
+    assert auth.parse_token(KEY, token, now=1_000 + auth.SESSION_SECONDS) is None
+    assert auth.parse_token("another key", token, now=1_000) is None
+
+
+def test_fingerprint_changes_with_the_password_and_does_not_leak_it() -> None:
+    first = auth.fingerprint(KEY, "hash-a")
+
+    assert first != auth.fingerprint(KEY, "hash-b")
+    assert first != auth.fingerprint("another key", "hash-a")
+    assert "hash-a" not in first and len(first) == auth.FINGERPRINT_LENGTH
 
 
 # --- password hashing ---

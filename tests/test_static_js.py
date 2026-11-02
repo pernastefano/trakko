@@ -42,7 +42,8 @@ def test_imports_resolve_to_existing_exports(module: Path) -> None:
 
 def test_every_module_is_used() -> None:
     imported = {target for module in MODULES for _, target in IMPORT.findall(module.read_text())}
-    entry_points = {"main.js"}
+    # main.js is the module entry point; theme-init.js is a plain script loaded by the page itself.
+    entry_points = {"main.js", "theme-init.js"}
     unused = {path.name for path in MODULES} - imported - entry_points
     # pwa.js and offline.js are imported by main.js through the same regex.
     assert not unused, f"modules never imported: {sorted(unused)}"
@@ -276,10 +277,22 @@ def test_the_form_follows_the_api_limits() -> None:
 def test_settings_show_the_account_and_the_credits() -> None:
     html = (TEMPLATES_DIR / "index.html").read_text()
 
-    for control in ("account-name", "logout-button", "about", "github-link"):
+    for control in ("account-name", "account-status", "logout-button", "change-password-button"):
         assert f'id="{control}"' in html, control
-    assert "Credits" in html
-    assert f'id="github-link" class="secondary-btn link-btn" href="{REPOSITORY}"' in html
+    # The credits are a single name that links to the repository, nothing else.
+    credits = re.search(r'<h2 class="settings-heading">Credits</h2>\s*(.*?)\s*</div>', html, re.S)
+    assert credits, "Credits section missing"
+    section = credits.group(1)
+    assert re.findall(r"<a [^>]*>([^<]*)</a>", section) == ["Stefano Perna"]
+    assert f'id="credits-link" href="{REPOSITORY}"' in section
+    assert re.sub(r"<[^>]+>", "", section).strip() == "Stefano Perna"
+
+
+def test_there_is_no_other_about_text_or_github_button() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    for removed in ("View the project on GitHub", "Built with", 'id="about"', 'id="github-link"'):
+        assert removed not in html
 
 
 def test_external_links_do_not_leak_the_opener() -> None:
@@ -307,3 +320,56 @@ def test_page_script_clears_cached_data_when_the_account_changes() -> None:
     api = (JS_DIR / "api.js").read_text()
 
     assert api.count("await clearApiCache();") == 3  # sign in, register, sign out
+
+
+# --- themes and password change ---
+
+
+def test_theme_picker_and_early_script_are_in_the_page() -> None:
+    base = (TEMPLATES_DIR / "base.html").read_text()
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    assert 'id="theme-options"' in html and 'role="radiogroup"' in html
+    # A plain, blocking script in <head>, after the stylesheet: the theme applies before painting.
+    head = base[: base.index("</head>")]
+    assert '<script src="/static/js/theme-init.js"></script>' in head
+    assert head.index("app.css") < head.index("theme-init.js")
+    assert 'type="module"' not in re.search(
+        r"<script src=\"/static/js/theme-init.js\"[^>]*>", head
+    ).group(0)
+
+
+def test_theme_init_script_has_no_globals_and_no_imports() -> None:
+    script = (JS_DIR / "theme-init.js").read_text()
+
+    assert script.count("(function () {") == 1 and script.rstrip().endswith("})();")
+    assert "import " not in script and "export " not in script
+
+
+def test_password_dialog_markup() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    for control in (
+        "password-dialog",
+        "password-form",
+        "password-current",
+        "password-new",
+        "password-confirm",
+        "password-error",
+        "password-save",
+        "password-close",
+    ):
+        assert f'id="{control}"' in html, control
+    assert (
+        'id="password-current" class="text-input" type="password" autocomplete="current-password"'
+        in html
+    )
+    assert html.count('autocomplete="new-password"') >= 3  # sign-up confirm, new, confirm new
+    assert 'id="password-new"' in html and 'minlength="8"' in html
+
+
+def test_password_change_request_matches_the_api() -> None:
+    api = (JS_DIR / "api.js").read_text()
+
+    assert 'request("POST", "/auth/password"' in api
+    assert "current_password: currentPassword" in api and "new_password: newPassword" in api

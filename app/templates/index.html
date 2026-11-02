@@ -97,23 +97,19 @@
         </div>
         <p id="data-status" class="settings-status" role="status" hidden></p>
 
+        <h2 class="settings-heading">Appearance</h2>
+        <div id="theme-options" class="theme-options" role="radiogroup" aria-label="Theme"></div>
+
         <h2 class="settings-heading">Account</h2>
         <p id="account-name" class="settings-note"></p>
         <div class="settings-actions">
+          <button id="change-password-button" type="button" class="secondary-btn">Change password</button>
           <button id="logout-button" type="button" class="secondary-btn">Sign out</button>
         </div>
+        <p id="account-status" class="settings-status" role="status" hidden></p>
 
-        <h2 class="settings-heading">About</h2>
-        <div id="about" class="about">
-          <p>TRAKKO is a simple tracker for the things that happen in your days.</p>
-          <h3 class="settings-subheading">Credits</h3>
-          <ul class="credits">
-            <li>Created by <a href="https://github.com/pernastefano" target="_blank" rel="noopener noreferrer">pernastefano</a>.</li>
-            <li>Built with FastAPI, SQLAlchemy, Alembic, Pydantic and Jinja2, and plain JavaScript.</li>
-            <li>Free and open source software, released under the MIT license.</li>
-          </ul>
-          <a id="github-link" class="secondary-btn link-btn" href="https://github.com/pernastefano/trakko" target="_blank" rel="noopener noreferrer">View the project on GitHub</a>
-        </div>
+        <h2 class="settings-heading">Credits</h2>
+        <p class="credits"><a id="credits-link" href="https://github.com/pernastefano/trakko" target="_blank" rel="noopener noreferrer">Stefano Perna</a></p>
       </div>
 
       <div id="settings-track" class="settings-screen" hidden>
@@ -243,6 +239,28 @@
     <div class="sheet-body">
       <div id="emoji-groups" class="emoji-groups"></div>
     </div>
+  </dialog>
+
+  <dialog id="password-dialog" class="sheet" aria-labelledby="password-title">
+    <div class="sheet-header">
+      <h2 id="password-title" class="sheet-title">Change password</h2>
+      <button id="password-close" type="button" class="icon-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="password-form" class="sheet-body editor-form">
+      <label for="password-current">Current password</label>
+      <input id="password-current" class="text-input" type="password" autocomplete="current-password" maxlength="128" required>
+      <label for="password-new">New password</label>
+      <input id="password-new" class="text-input" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+      <label for="password-confirm">Confirm new password</label>
+      <input id="password-confirm" class="text-input" type="password" autocomplete="new-password" minlength="8" maxlength="128" required>
+      <p class="login-hint">At least 8 characters. You stay signed in here; your other devices are signed out.</p>
+      <p id="password-error" class="form-error" role="alert" hidden></p>
+      <div class="editor-actions">
+        <button id="password-save" type="submit" class="primary-btn">Change password</button>
+      </div>
+    </form>
   </dialog>
 
   <dialog id="confirm-dialog" class="sheet" aria-labelledby="confirm-title" aria-describedby="confirm-message">

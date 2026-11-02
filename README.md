@@ -27,12 +27,13 @@ each with their own account and their own data.
   streak, days since the last entry, average interval, entries per week or month, and an activity
   heatmap, drawn as inline SVG.
 - **Export and import** all data as JSON.
-- **Installable PWA:** manifest, icons, iOS support, safe-area insets, a dark graphite and amber
-  theme (with a light variant for devices set to light mode), and an app shell that opens offline
-  (changes need a connection).
+- **Themes:** choose one in Settings: Graphite (default), Midnight, Forest and Ember (dark), Paper
+  and Sand (light), or Automatic to follow the device. The choice is remembered on that device.
+- **Installable PWA:** manifest, icons, iOS support, safe-area insets, and an app shell that opens
+  offline (changes need a connection).
 - **REST API** under `/api/v1` with OpenAPI docs at `/docs`.
-- **Accounts:** sign up, sign in and sign out; many users can share one installation and nobody
-  sees anybody else's data. Registration can be switched off.
+- **Accounts:** sign up, sign in, sign out and change your password; many users can share one
+  installation and nobody sees anybody else's data. Registration can be switched off.
 
 ## Quick start (local)
 

@@ -8,7 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.config import Settings
-from app.errors import ConflictError, ForbiddenError, UnauthorizedError
+from app.errors import ConflictError, ForbiddenError, InvalidError, UnauthorizedError
 from app.models import Track, User
 
 DEFAULT_TRACK_NAME = "My Track"
@@ -86,6 +86,15 @@ def register(session: Session, settings: Settings, username: str, password: str)
     if not registration_open(session, settings):
         raise ForbiddenError("Registration is closed")
     return create_user(session, username, password)
+
+
+def change_password(session: Session, user: User, current_password: str, new_password: str) -> None:
+    if not verify_password(current_password, user.password_hash):
+        raise ForbiddenError("The current password is not correct")
+    if new_password == current_password:
+        raise InvalidError("The new password must be different from the current one")
+    user.password_hash = hash_password(new_password)
+    session.commit()
 
 
 def authenticate_or_none(session: Session, username: str, password: str) -> User | None:

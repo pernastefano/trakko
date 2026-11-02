@@ -154,6 +154,8 @@ events.
 | `calendar.js`, `dates.js`, `markers.js` | Day/Week/Month views, date arithmetic on `YYYY-MM-DD` strings, entry markers. |
 | `editor.js` | Bottom sheet to add, edit and delete the entries of a day. |
 | `settings.js`, `type-editor.js`, `confirm.js`, `data-transfer.js` | Settings screens, Event Type dialog, confirmations, JSON export/import. |
+| `password.js` | Dialog to change the signed-in user's password. |
+| `theme.js`, `appearance.js`, `theme-init.js` | Color themes: the list and saving, the picker in Settings, and the early script that applies the saved theme before the page is drawn. |
 | `emoji-picker.js`, `emoji-data.js` | Emoji chosen from a list (a bottom sheet) instead of typed; only emoji the device can draw are shown. |
 | `stats.js`, `charts.js` | Statistics screen; SVG bar chart and heatmap. |
 | `views.js`, `offline.js`, `pwa.js`, `dom.js` | Hash routing, offline banner, service worker registration, DOM helpers. |
@@ -166,8 +168,21 @@ Window events used between modules:
 | `trakko:data-changed` | `settings.js` | Tracks or Event Types changed; `main.js` reloads the Tracks. |
 | `trakko:connectivity` | `api.js` | The server became reachable or unreachable; drives the offline banner. |
 
-Text is always inserted with `textContent` (never HTML), there are no inline scripts, and colors
-and sizes come from CSS custom properties with a `prefers-color-scheme: dark` override.
+Text is always inserted with `textContent` (never HTML) and there are no inline scripts.
+
+### Themes
+
+Every color comes from CSS custom properties, and a theme is a block of `app.css` that sets the same
+ten variables: Graphite, Midnight, Forest and Ember (dark) and Paper and Sand (light), selected by a
+`data-theme` attribute on `<html>`. "Automatic" (no attribute) is Graphite, or Paper when the device
+is set to light, through `prefers-color-scheme`. The choice is a **per-device** preference kept in
+`localStorage` (`trakko.theme`), not part of the account.
+
+To avoid a flash of the wrong theme, `theme-init.js` is a small plain (non-module) script in
+`<head>` that sets the attribute before anything is painted; `theme.js` then keeps the browser's own
+bar (`theme-color`) in step. The theme cards in Settings reuse the real palette by carrying
+`data-theme` on a small preview element. Tests check that every theme defines all the variables, is
+readable (contrast), and contains no violet or lilac.
 
 ## Accounts and authentication
 
@@ -180,9 +195,13 @@ recovery. Several users coexist in one database and never see each other's data.
   parameters are stored with each hash so the cost can be raised later. Logging in with an unknown
   name costs the same time as a wrong password, and both give the same message.
 - **Session cookie** `trakko_session`: `HttpOnly`, `SameSite=Lax`, 30 days, `Secure` when the request
-  arrived over HTTPS. Its value is `<user id>.<expiry>.<HMAC-SHA256>`, signed with
-  `TRAKKO_SECRET_KEY` using the standard library only. Changing the key signs everyone out; a
-  cookie for a deleted user stops working.
+  arrived over HTTPS. Its value is `<user id>.<expiry>.<password fingerprint>.<HMAC-SHA256>`, signed
+  with `TRAKKO_SECRET_KEY` using the standard library only. The fingerprint is derived from the
+  user's current password hash, so **changing the password ends every other session** of that user
+  (the device that changed it gets a fresh cookie). Changing the key signs everyone out; a cookie
+  for a deleted user stops working.
+- **Changing the password** (`POST /api/v1/auth/password`) asks for the current password and
+  accepts a different new one of 8 to 128 characters.
 - **Registration** can be closed with `TRAKKO_ALLOW_REGISTRATION=false`, but it stays possible while
   no account exists, so a new installation can always create its first user.
 - Without `TRAKKO_SECRET_KEY` a random key is generated at startup (with a warning): everything works

@@ -137,3 +137,10 @@ export function getStats({ trackId, period, ref, today }) {
   const query = new URLSearchParams({ track_id: trackId, period, ref, today });
   return request("GET", `/stats?${query}`);
 }
+
+export function changePassword(currentPassword, newPassword) {
+  return request("POST", "/auth/password", {
+    current_password: currentPassword,
+    new_password: newPassword,
+  });
+}

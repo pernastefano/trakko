@@ -1,5 +1,15 @@
+/*
+ * Themes. Each one sets the same variables. With no data-theme attribute ("Automatic") the page is
+ * dark graphite, or Paper when the device is set to light. A chosen theme sets data-theme on <html>
+ * (see theme.js); the cards in Settings set it on a small preview element to show their colors.
+ */
+
 :root {
-  /* Dark graphite with an amber accent; the light variant below follows the system setting. */
+  --touch: 44px;
+}
+
+:root,
+[data-theme="graphite"] {
   color-scheme: dark;
   --bg: #0e1012;
   --surface: #181b1f;
@@ -11,11 +21,10 @@
   --danger: #f28b82;
   --banner-bg: #3b2a0d;
   --banner-text: #f6d79b;
-  --touch: 44px;
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme]) {
     color-scheme: light;
     --bg: #ebe8e1;
     --surface: #f8f6f1;
@@ -28,6 +37,76 @@
     --banner-bg: #fdeccb;
     --banner-text: #6b3a05;
   }
+}
+
+[data-theme="paper"] {
+  color-scheme: light;
+  --bg: #ebe8e1;
+  --surface: #f8f6f1;
+  --text: #1e2023;
+  --muted: #66615a;
+  --border: #d9d5cc;
+  --accent: #b45309;
+  --accent-text: #ffffff;
+  --danger: #b42318;
+  --banner-bg: #fdeccb;
+  --banner-text: #6b3a05;
+}
+
+[data-theme="midnight"] {
+  color-scheme: dark;
+  --bg: #070b14;
+  --surface: #0f1624;
+  --text: #e6ecf5;
+  --muted: #8e9bb2;
+  --border: #223049;
+  --accent: #38bdf8;
+  --accent-text: #04202e;
+  --danger: #f87171;
+  --banner-bg: #10304a;
+  --banner-text: #bfe6ff;
+}
+
+[data-theme="forest"] {
+  color-scheme: dark;
+  --bg: #0a100c;
+  --surface: #121a15;
+  --text: #e4eee6;
+  --muted: #8fa394;
+  --border: #25332a;
+  --accent: #4ade80;
+  --accent-text: #052e16;
+  --danger: #f87171;
+  --banner-bg: #1d3a24;
+  --banner-text: #c6f0cf;
+}
+
+[data-theme="ember"] {
+  color-scheme: dark;
+  --bg: #120c0b;
+  --surface: #1c1412;
+  --text: #f3e8e4;
+  --muted: #ab9a94;
+  --border: #35241f;
+  --accent: #ff7a59;
+  --accent-text: #2a0d05;
+  --danger: #fca5a5;
+  --banner-bg: #4a2312;
+  --banner-text: #ffd9c2;
+}
+
+[data-theme="sand"] {
+  color-scheme: light;
+  --bg: #e9e2d3;
+  --surface: #f6f1e6;
+  --text: #26231c;
+  --muted: #6c6455;
+  --border: #d8cfbb;
+  --accent: #0f766e;
+  --accent-text: #ffffff;
+  --danger: #b42318;
+  --banner-bg: #dcefe9;
+  --banner-text: #0b4a43;
 }
 
 *,
@@ -1232,35 +1311,98 @@ input {
   color: var(--muted);
 }
 
-.settings-subheading {
-  margin: 8px 0 0;
-  font-size: 0.9375rem;
-}
-
-.about {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .credits {
-  margin: 0 0 8px;
-  padding-left: 20px;
-  color: var(--muted);
+  margin: 0;
 }
 
-.credits li + li {
-  margin-top: 4px;
-}
-
-.credits a,
-.about a:not(.link-btn) {
+.credits a {
   color: var(--accent);
 }
 
-.link-btn {
-  display: inline-flex;
+/* Appearance: theme picker */
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(152px, 1fr));
+  gap: 8px;
+}
+
+.theme-option {
+  position: relative;
+}
+
+.theme-input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.theme-card {
+  display: flex;
   align-items: center;
-  align-self: flex-start;
-  text-decoration: none;
+  gap: 10px;
+  min-height: 56px;
+  padding: 8px 10px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+}
+
+.theme-input:checked + .theme-card {
+  border-color: var(--accent);
+  background: var(--bg);
+  font-weight: 600;
+}
+
+.theme-input:focus-visible + .theme-card {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.theme-swatch {
+  display: flex;
+  flex: none;
+  width: 44px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.theme-chip {
+  position: relative;
+  flex: 1;
+  background: var(--bg);
+}
+
+.theme-chip::before {
+  position: absolute;
+  inset: 8px 6px 6px;
+  border-radius: 3px;
+  background: var(--surface);
+  content: "";
+}
+
+.theme-chip::after {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  content: "";
+}
+
+.theme-label {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.theme-hint {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 400;
 }

@@ -79,7 +79,7 @@ read it (SQLite needs batch operations, `env.py` already enables them) and exten
 
 **Front end.** Vanilla JavaScript as ES modules: no globals, no inline scripts, no frameworks,
 no build step. Set text with `textContent`, label controls, keep touch targets at least 44 px, and
-use the CSS variables in `app.css` so light and dark mode keep working. Load data through `api.js`
+use the CSS variables in `app.css` so every theme keeps working (never hard-code a color). Load data through `api.js`
 only. Every file under `app/static/` and `app/templates/` is precached by the service worker, so a
 new file is picked up automatically.
 
@@ -144,6 +144,17 @@ alembic upgrade head && uvicorn app.main:app --host 127.0.0.1 --port 8000
 `tests/test_container.py` guards the rest: every third-party import must be in `requirements.txt`,
 the paths the Dockerfile copies must exist and not be ignored, and the workflow files must keep the
 triggers, permissions and tags the documentation describes.
+
+## Adding a theme
+
+1. In `app/static/css/app.css` add a `[data-theme="<id>"]` block that sets all ten variables of the
+   others (`--bg`, `--surface`, `--text`, `--muted`, `--border`, `--accent`, `--accent-text`,
+   `--danger`, `--banner-bg`, `--banner-text`) and `color-scheme`.
+2. Add `{ id, name, hint }` to `THEMES` in `app/static/js/theme.js` (the id is lowercase letters
+   only).
+3. Run `pytest tests/test_theme.py`: it checks that the theme is complete, readable (contrast), as
+   dark or light as it claims and free of violet, and that the picker and the stylesheet list the
+   same themes.
 
 ## Database
 

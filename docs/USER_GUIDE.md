@@ -50,7 +50,7 @@ file (see below) so you can start again with a new account if you ever lose acce
 - **Middle:** the calendar (Home), your statistics, or your settings.
 - **Bottom:** **Home**, **Statistics** and **Settings**.
 
-The app is dark (graphite with amber highlights); on a phone set to light mode it switches to a light version of the same colors.
+The default look is dark graphite with amber highlights. You can change it in **Settings → Appearance** (see below).
 
 ## Create your Tracks and Event Types
 
@@ -126,10 +126,26 @@ In **Settings → Data**:
   you to confirm first. A file that cannot be read, or that is not a valid TRAKKO export, is
   rejected and nothing changes.
 
-### Account, credits and the project
+### Appearance
 
-At the bottom of **Settings**, **Account** shows who is signed in and has **Sign out**; do it when
-you share a device. **About** lists the credits and a link to the project on GitHub
+**Settings → Appearance** lets you pick a theme: **Automatic** (the default look, or a light one when
+your phone is set to light mode), **Graphite**, **Midnight**, **Forest** and **Ember** (dark), and
+**Paper** and **Sand** (light). The change is immediate. It is remembered on this device only, so
+each phone or computer can have its own.
+
+### Account
+
+**Settings → Account** shows who is signed in.
+
+- **Change password**: enter your current password, then the new one twice (at least 8
+  characters, different from the old one) and tap **Change password**. You stay signed in on this
+  device; **your other devices are signed out** and need the new password. If you forgot your
+  current password it cannot be changed here (there is no email recovery).
+- **Sign out**: do it when you share a device.
+
+### Credits
+
+The last section of Settings credits the author, Stefano Perna, and links to the project on GitHub
 (https://github.com/pernastefano/trakko).
 
 ## Working offline
@@ -146,6 +162,8 @@ offline. Changes cannot be saved offline: try again when you are back online.
 | I cannot log anything | The Track has no Event Types yet; add one in Settings. |
 | "Authentication required" or the sign-in screen appears | Your session ended; sign in again. |
 | "Invalid username or password" | Check both; usernames ignore capital letters, passwords do not. |
+| "The current password is not correct" | Typed wrong when changing your password; try again. |
+| I changed my password and my phone was signed out | Expected: sign in again on your other devices with the new password. |
 | "That username is already taken" | Choose another username. |
 | "Registration is closed" | The server does not accept new accounts; ask whoever runs it. |
 | An update does not appear | Close and reopen the app (or reload the page); a new version is fetched in the background and used the next time it opens. |
