@@ -44,6 +44,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Static consistency tests for the JavaScript modules (imports, element ids, editor, settings and
   statistics markup, service worker cache rules).
 
+- Documentation: `docs/ARCHITECTURE.md` (components, data model, request flow, service worker),
+  `docs/USER_GUIDE.md`, `docs/DEPLOYMENT.md`, `docs/DEVELOPMENT.md`, `CONTRIBUTING.md`, and a
+  complete README (badges, features, container usage, configuration, documentation index).
+- Tests that keep the documentation consistent with the code (links, settings, endpoints, files).
+
 ### Changed
 - API validation messages no longer start with pydantic's "Value error, " prefix.
 - The service worker no longer stores copies of `/api/v1/export`; signing out also clears the
