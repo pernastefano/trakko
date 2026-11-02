@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block body %}
+<section id="login" class="login" aria-labelledby="login-title" hidden>
+  <form id="login-form" class="login-form" autocomplete="on">
+    <h1 id="login-title">TRAKKO</h1>
+    <label for="login-password">Password</label>
+    <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+    <p id="login-error" class="form-error" role="alert" hidden></p>
+    <button type="submit" class="primary-btn">Sign in</button>
+  </form>
+</section>
+
+<div id="app" class="app" hidden>
+  <div id="offline-banner" class="offline-banner" role="status" hidden>
+    You are offline. Changes cannot be saved.
+  </div>
+
+  <header id="track-bar" class="track-bar">
+    <button id="track-prev" type="button" class="icon-btn" aria-label="Previous track">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <div class="track-info">
+      <h1 id="track-name" class="track-name">TRAKKO</h1>
+      <p id="track-position" class="track-position" aria-live="polite"></p>
+    </div>
+    <button id="track-next" type="button" class="icon-btn" aria-label="Next track">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </header>
+
+  <main class="content">
+    <section id="view-home" data-view="home" aria-label="Calendar">
+      <p class="placeholder">The calendar will appear here.</p>
+    </section>
+    <section id="view-stats" data-view="stats" aria-label="Statistics" hidden>
+      <p class="placeholder">Statistics will appear here.</p>
+    </section>
+    <section id="view-settings" data-view="settings" aria-label="Settings" hidden>
+      <p class="placeholder">Settings will appear here.</p>
+    </section>
+    <div id="load-error" class="load-error" hidden>
+      <p id="load-error-message" role="alert"></p>
+      <button id="load-retry" type="button" class="primary-btn">Try again</button>
+    </div>
+  </main>
+
+  <nav class="nav" aria-label="Main">
+    <a href="#/" data-nav="home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9H4z"/></svg>
+      <span>Home</span>
+    </a>
+    <a href="#/stats" data-nav="stats">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+      <span>Statistics</span>
+    </a>
+    <a href="#/settings" data-nav="settings">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+</div>
+{% endblock %}

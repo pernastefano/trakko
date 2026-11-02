@@ -1,13 +1,19 @@
+import mimetypes
+
 from fastapi import APIRouter, Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
 from app.deps import require_auth
 from app.errors import AppError
-from app.routers import auth, data, entries, event_types, stats, tracks
+from app.routers import auth, data, entries, event_types, pwa, stats, tracks
+from app.services.pwa import STATIC_DIR
 
 API_PREFIX = "/api/v1"
+
+mimetypes.add_type("application/manifest+json", ".webmanifest")
 
 
 def _validation_detail(error: RequestValidationError) -> str:
@@ -42,6 +48,8 @@ def create_app() -> FastAPI:
         protected.include_router(router.router)
     api.include_router(protected)
     app.include_router(api)
+    app.include_router(pwa.router)
+    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/health", include_in_schema=False)
     def health() -> dict[str, str]:

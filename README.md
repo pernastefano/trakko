@@ -7,6 +7,15 @@ and log **Entries** on a calendar with an optional short note.
 
 > Work in progress: only the project skeleton exists so far.
 
+## Features
+
+- Installable PWA (manifest, icons, iOS meta tags, safe-area insets), light and dark mode.
+- App shell cached by a versioned service worker; offline banner when the server is unreachable.
+- Track selector with arrows, swipe and a "2/5" indicator, and a bottom navigation bar.
+- REST API for Tracks, Event Types, Entries, statistics and JSON export/import.
+
+The calendar, day editor, settings and statistics screens are still to come.
+
 ## Quick start (local)
 
 ```bash
@@ -36,6 +45,17 @@ All configuration is done through environment variables (see `.env.example`).
 pytest                          # run tests
 ruff format . && ruff check .   # format + lint
 ```
+
+The PWA icons in `app/static/icons/` are generated with the standard library only; regenerate
+them after changing the artwork:
+
+```bash
+python scripts/generate_icons.py
+```
+
+The service worker is served from `/service-worker.js`. Its cache name is a hash of the files in
+`app/static/` and `app/templates/`, so any change to the shell makes browsers fetch a fresh copy and
+drop the old cache automatically.
 
 ## License
 

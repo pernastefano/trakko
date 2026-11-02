@@ -19,3 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional shared-password authentication with a signed, HTTP-only session cookie
   (`TRAKKO_PASSWORD` + `TRAKKO_SECRET_KEY`).
 - API documentation in `docs/API.md`.
+- UI shell: Jinja2 page with the Track selector (arrows, swipe, "n/m" indicator), Home /
+  Statistics / Settings navigation bar, sign-in form and an offline banner, in plain CSS
+  (light/dark, safe-area insets) and vanilla ES modules.
+- PWA: web app manifest, generated icons (192, 512, maskable, apple-touch-icon), iOS meta tags,
+  and a service worker served from `/service-worker.js` that precaches the app shell with a
+  content-hashed cache name and uses network-first for `/api/*` (read-only copies of GET
+  responses are used when offline).
+- `jinja2` runtime dependency.
