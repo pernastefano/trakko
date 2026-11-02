@@ -738,3 +738,261 @@ input {
   opacity: 0.4;
   cursor: default;
 }
+
+/* Settings */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.settings-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-heading {
+  margin: 12px 0 0;
+  font-size: 1rem;
+}
+
+.settings-heading:first-child {
+  margin-top: 0;
+}
+
+.settings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.settings-row-main {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 52px;
+  padding: 4px 4px 4px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.settings-row-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-row-detail {
+  margin-left: auto;
+  color: var(--muted);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.reorder {
+  display: flex;
+  flex: none;
+}
+
+.reorder .icon-btn {
+  width: 40px;
+}
+
+.badge {
+  align-self: center;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.inline-form {
+  display: flex;
+  gap: 8px;
+}
+
+.inline-form input,
+.text-input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch);
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.settings-status {
+  color: var(--muted);
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
+.secondary-btn {
+  min-height: var(--touch);
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: var(--bg);
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: var(--touch);
+  color: var(--accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.settings-screen > .danger-btn {
+  align-self: flex-start;
+}
+
+.danger-fill-btn {
+  min-height: var(--touch);
+  padding: 0 24px;
+  border: 0;
+  border-radius: 8px;
+  background: #b91c1c;
+  color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Event type editor */
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.field-group legend {
+  margin-bottom: 8px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.name-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.marker-large {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swatch {
+  position: relative;
+  width: var(--touch);
+  height: var(--touch);
+}
+
+.swatch input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.swatch span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.swatch input:checked + span {
+  box-shadow: 0 0 0 3px var(--accent);
+}
+
+.swatch input:focus-visible + span {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.custom-color {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--touch);
+}
+
+.custom-color input {
+  width: var(--touch);
+  height: var(--touch);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.settings-row-main .marker {
+  width: 24px;
+  height: 24px;
+  font-size: 13px;
+}
+
+.settings-status.is-error {
+  color: var(--danger);
+}

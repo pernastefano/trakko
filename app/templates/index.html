@@ -54,7 +54,48 @@
       <p class="placeholder">Statistics will appear here.</p>
     </section>
     <section id="view-settings" data-view="settings" aria-label="Settings" hidden>
-      <p class="placeholder">Settings will appear here.</p>
+      <div id="settings-home" class="settings-screen">
+        <h2 class="settings-heading">Tracks</h2>
+        <ul id="settings-tracks" class="settings-list"></ul>
+        <form id="new-track-form" class="inline-form">
+          <label for="new-track-name" class="visually-hidden">New Track name</label>
+          <input id="new-track-name" type="text" maxlength="100" placeholder="New Track" required autocomplete="off">
+          <button type="submit" class="primary-btn">Add</button>
+        </form>
+        <p id="settings-error" class="form-error" role="alert" hidden></p>
+
+        <h2 class="settings-heading">Data</h2>
+        <div class="settings-actions">
+          <button id="export-button" type="button" class="secondary-btn">Export JSON</button>
+          <button id="import-button" type="button" class="secondary-btn">Import JSON</button>
+          <input id="import-file" type="file" accept="application/json,.json" hidden>
+        </div>
+        <p id="data-status" class="settings-status" role="status" hidden></p>
+
+        <div id="account" hidden>
+          <h2 class="settings-heading">Account</h2>
+          <button id="logout-button" type="button" class="secondary-btn">Sign out</button>
+        </div>
+      </div>
+
+      <div id="settings-track" class="settings-screen" hidden>
+        <a id="settings-back" href="#/settings" class="back-link">&lsaquo; Settings</a>
+        <form id="track-form" class="inline-form">
+          <label for="track-name-input" class="visually-hidden">Track name</label>
+          <input id="track-name-input" type="text" maxlength="100" required autocomplete="off">
+          <button id="track-save" type="submit" class="primary-btn" disabled>Save</button>
+        </form>
+        <div class="settings-actions">
+          <span id="default-badge" class="badge" hidden>Default Track</span>
+          <button id="make-default" type="button" class="secondary-btn" hidden>Make default</button>
+        </div>
+
+        <h2 class="settings-heading">Event types</h2>
+        <ul id="settings-types" class="settings-list"></ul>
+        <button id="add-type" type="button" class="secondary-btn">Add event type</button>
+        <p id="track-error" class="form-error" role="alert" hidden></p>
+        <button id="delete-track" type="button" class="danger-btn">Delete Track</button>
+      </div>
     </section>
     <div id="load-error" class="load-error" hidden>
       <p id="load-error-message" role="alert"></p>
@@ -107,6 +148,61 @@
         </div>
       </form>
     </div>
+  </dialog>
+
+  <dialog id="type-editor" class="sheet" aria-labelledby="type-editor-title">
+    <div class="sheet-header">
+      <h2 id="type-editor-title" class="sheet-title"></h2>
+      <button id="type-close" type="button" class="icon-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form id="type-form" class="sheet-body editor-form">
+      <label for="type-name">Name</label>
+      <div class="name-row">
+        <span id="type-preview" class="marker marker-large"></span>
+        <input id="type-name" class="text-input" type="text" maxlength="100" required autocomplete="off">
+      </div>
+
+      <fieldset class="field-group">
+        <legend>Color</legend>
+        <div id="type-swatches" class="swatches"></div>
+        <label class="custom-color">
+          <input id="type-color-custom" type="color">
+          <span>Custom color</span>
+        </label>
+      </fieldset>
+
+      <fieldset class="field-group">
+        <legend>Icon</legend>
+        <div class="editor-types">
+          <label class="chip"><input class="chip-input" type="radio" name="icon-kind" value="none" checked><span class="chip-body">None</span></label>
+          <label class="chip"><input class="chip-input" type="radio" name="icon-kind" value="emoji"><span class="chip-body">Emoji</span></label>
+          <label class="chip"><input class="chip-input" type="radio" name="icon-kind" value="text"><span class="chip-body">Letter or number</span></label>
+        </div>
+        <div id="type-icon-field" hidden>
+          <label id="type-icon-label" for="type-icon-value"></label>
+          <input id="type-icon-value" class="text-input" type="text" autocomplete="off">
+        </div>
+      </fieldset>
+
+      <p id="type-error" class="form-error" role="alert" hidden></p>
+      <div class="editor-actions">
+        <button id="type-delete" type="button" class="danger-btn" hidden>Delete</button>
+        <button id="type-save" type="submit" class="primary-btn">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" class="sheet" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <form method="dialog" class="sheet-body">
+      <h2 id="confirm-title" class="sheet-title"></h2>
+      <p id="confirm-message"></p>
+      <div class="editor-actions">
+        <button type="submit" value="cancel" class="text-btn">Cancel</button>
+        <button id="confirm-accept" type="submit" value="confirm" class="danger-fill-btn">Delete</button>
+      </div>
+    </form>
   </dialog>
 </div>
 {% endblock %}

@@ -3,7 +3,8 @@ const VIEWS = ["home", "stats", "settings"];
 const VIEWS_WITH_TRACK_BAR = ["home", "stats"];
 
 function currentView() {
-  const name = location.hash.replace(/^#\/?/, "");
+  // "#/settings/tracks/3" belongs to the settings view.
+  const name = location.hash.replace(/^#\/?/, "").split("/")[0];
   return VIEWS.includes(name) ? name : "home";
 }
 

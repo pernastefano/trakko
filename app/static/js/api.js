@@ -1,4 +1,6 @@
 const API_BASE = "/api/v1";
+// Name of the service worker cache that holds copies of GET responses (see service-worker.js).
+const API_CACHE_NAME = "trakko-api-v1";
 
 export class ApiError extends Error {
   constructor(status, detail) {
@@ -69,4 +71,51 @@ export function updateEntry(id, data) {
 
 export function deleteEntry(id) {
   return request("DELETE", `/entries/${id}`);
+}
+
+export function createTrack(name) {
+  return request("POST", "/tracks", { name });
+}
+
+export function updateTrack(id, data) {
+  return request("PATCH", `/tracks/${id}`, data);
+}
+
+export function deleteTrack(id) {
+  return request("DELETE", `/tracks/${id}`);
+}
+
+export function reorderTracks(ids) {
+  return request("PUT", "/tracks/order", { ids });
+}
+
+export function createEventType(trackId, data) {
+  return request("POST", `/tracks/${trackId}/event-types`, data);
+}
+
+export function updateEventType(id, data) {
+  return request("PATCH", `/event-types/${id}`, data);
+}
+
+export function deleteEventType(id) {
+  return request("DELETE", `/event-types/${id}`);
+}
+
+export function reorderEventTypes(trackId, ids) {
+  return request("PUT", `/tracks/${trackId}/event-types/order`, { ids });
+}
+
+export function exportData() {
+  return request("GET", "/export");
+}
+
+/** Replace all data with the content of an export document. */
+export function importData(document) {
+  return request("POST", "/import", document);
+}
+
+export async function logout() {
+  await request("POST", "/auth/logout");
+  // Do not leave the signed-in user's data in the offline cache.
+  if ("caches" in window) await caches.delete(API_CACHE_NAME);
 }

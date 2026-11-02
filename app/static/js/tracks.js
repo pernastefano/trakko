@@ -33,10 +33,11 @@ export function createTrackSelector({ onChange }) {
   onSwipe(bar, { onLeft: () => move(1), onRight: () => move(-1) });
 
   return {
-    /** Show `list` and select the default Track. */
-    setTracks(list) {
+    /** Show `list`, selecting `keepId` if it is still there, otherwise the default Track. */
+    setTracks(list, keepId = null) {
       tracks = list;
-      index = Math.max(0, list.findIndex((track) => track.is_default));
+      const kept = list.findIndex((track) => track.id === keepId);
+      index = kept >= 0 ? kept : Math.max(0, list.findIndex((track) => track.is_default));
       render();
       if (tracks[index]) onChange(tracks[index]);
     },

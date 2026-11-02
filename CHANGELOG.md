@@ -34,4 +34,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Day editor: bottom sheet (native `<dialog>`) opened by tapping a day in any view. It lists the
   day's entries for the current Track and adds, edits (type, note) and deletes entries; Save and
   Delete close the sheet and refresh the calendar.
-- Static consistency tests for the JavaScript modules (imports, element ids, editor markup).
+- Settings screens (`#/settings`, `#/settings/tracks/<id>`): manage Tracks and Event Types with
+  reordering, default Track, color palette plus custom color, icon picker with live preview,
+  confirmation dialogs that show what will be deleted, JSON export/import and sign out.
+- Static consistency tests for the JavaScript modules (imports, element ids, editor and settings
+  markup, service worker cache rules).
+
+### Changed
+- API validation messages no longer start with pydantic's "Value error, " prefix.
+- The service worker no longer stores copies of `/api/v1/export`; signing out also clears the
+  cached API responses.

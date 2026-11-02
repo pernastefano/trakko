@@ -60,8 +60,10 @@ async function networkFirstShell(request) {
 }
 
 async function networkFirstApi(request, url) {
-  // Authentication responses are never stored.
-  const cacheable = !url.pathname.startsWith("/api/v1/auth/");
+  // Authentication responses and the full data export are never stored.
+  const cacheable = !["/api/v1/auth/", "/api/v1/export"].some((prefix) =>
+    url.pathname.startsWith(prefix),
+  );
   try {
     const response = await fetch(request);
     if (response.ok && cacheable) {

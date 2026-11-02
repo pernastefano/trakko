@@ -148,3 +148,15 @@ def test_delete_removes_its_entries_only(client: TestClient, track: dict) -> Non
 def test_unknown_event_type_is_404(client: TestClient) -> None:
     assert client.patch(f"{API}/event-types/999", json={"name": "x"}).status_code == 404
     assert client.delete(f"{API}/event-types/999").status_code == 404
+
+
+def test_validation_messages_have_no_pydantic_prefix(client: TestClient, track: dict) -> None:
+    response = client.post(
+        f"{API}/tracks/{track['id']}/event-types",
+        json={"name": "X", "color": "#000000", "icon_kind": "emoji", "icon_value": "abc"},
+    )
+
+    assert response.status_code == 422
+    assert response.json()["detail"] == (
+        "icon_value must be an emoji or symbol when icon_kind is 'emoji'"
+    )

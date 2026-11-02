@@ -4,6 +4,7 @@ import { createCalendar } from "./calendar.js";
 import { createDayEditor } from "./editor.js";
 import { initOfflineBanner } from "./offline.js";
 import { registerServiceWorker } from "./pwa.js";
+import { createSettings } from "./settings.js";
 import { createTrackSelector } from "./tracks.js";
 import { initViews } from "./views.js";
 
@@ -13,6 +14,7 @@ const loadErrorMessage = document.getElementById("load-error-message");
 const calendar = createCalendar();
 const trackSelector = createTrackSelector({ onChange: (track) => calendar.setTrack(track) });
 createDayEditor({ currentTrack: trackSelector.current, onChange: calendar.refresh });
+const settings = createSettings();
 
 function showLoadError(message) {
   loadErrorMessage.textContent = message;
@@ -25,11 +27,21 @@ async function load() {
     await ensureAuthenticated();
     app.hidden = false;
     trackSelector.setTracks(await listTracks());
+    settings.activate();
   } catch (error) {
     app.hidden = false;
     showLoadError(error.message || "Could not load your data.");
   }
 }
+
+// Settings changed Tracks or Event Types: reload them, keeping the selected Track if possible.
+window.addEventListener("trakko:data-changed", async () => {
+  try {
+    trackSelector.setTracks(await listTracks(), trackSelector.current()?.id);
+  } catch (error) {
+    showLoadError(error.message || "Could not reload your data.");
+  }
+});
 
 initOfflineBanner();
 initViews();

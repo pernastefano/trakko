@@ -19,7 +19,13 @@ and log **Entries** on a calendar with an optional short note.
 - Day editor (bottom sheet): tap a day, tap an event type, Save. Add an optional note, tap an
   existing entry to change its type or note, or delete it.
 
-The settings and statistics screens are still to come.
+- Settings: create, rename, reorder (up/down buttons), set default and delete Tracks; per Track,
+  create, edit, reorder and delete Event Types (name, palette or custom color, icon: none, emoji or
+  one or two letters/digits). Deleting asks for confirmation and shows how many entries go with
+  it. Export all data as a JSON file, import one back (replaces everything), and sign out when a
+  password is set.
+
+The statistics screen is still to come.
 
 ## Quick start (local)
 

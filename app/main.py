@@ -20,7 +20,8 @@ def _validation_detail(error: RequestValidationError) -> str:
     messages = []
     for item in error.errors():
         location = ".".join(str(part) for part in item["loc"] if part not in ("body", "query"))
-        messages.append(f"{location}: {item['msg']}" if location else item["msg"])
+        message = item["msg"].removeprefix("Value error, ")
+        messages.append(f"{location}: {message}" if location else message)
     return "; ".join(messages)
 
 
