@@ -124,7 +124,7 @@ by GitHub Actions only.
 |------|---------|
 | `Dockerfile`, `.dockerignore` | `python:3.12-slim`, non-root user, `/data` volume, runs `alembic upgrade head` and then Uvicorn on port 8000, `HEALTHCHECK` on `/health`. |
 | `.github/workflows/ci.yml` | On pull requests and pushes to `main`: `ruff format --check`, `ruff check` and `pytest` on Python 3.12. |
-| `.github/workflows/docker.yml` | On pushes to `main` and `v*` tags: build, smoke test, then push `linux/amd64` and `linux/arm64` images to `ghcr.io/<owner>/trakko` with the workflow's `GITHUB_TOKEN`. |
+| `.github/workflows/docker.yml` | On pushes to `main` and `v*` tags: build, smoke test, then push `linux/amd64` and `linux/arm64` images to `ghcr.io/pernastefano/trakko` with the workflow's `GITHUB_TOKEN`. |
 
 Without Docker you can still check what the image needs: it installs only `requirements.txt`, so
 create a clean virtual environment with just that file, copy `alembic.ini`, `alembic/` and `app/`

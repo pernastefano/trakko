@@ -1,7 +1,7 @@
 # TRAKKO
 
-[![CI](https://github.com/<owner>/trakko/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/trakko/actions/workflows/ci.yml)
-[![Docker](https://github.com/<owner>/trakko/actions/workflows/docker.yml/badge.svg)](https://github.com/<owner>/trakko/actions/workflows/docker.yml)
+[![CI](https://github.com/pernastefano/trakko/actions/workflows/ci.yml/badge.svg)](https://github.com/pernastefano/trakko/actions/workflows/ci.yml)
+[![Docker](https://github.com/pernastefano/trakko/actions/workflows/docker.yml/badge.svg)](https://github.com/pernastefano/trakko/actions/workflows/docker.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 A mobile-first Progressive Web App to track daily events.
@@ -52,7 +52,7 @@ The image is built by GitHub Actions and published to the GitHub Container Regis
 docker run -d --name trakko -p 8000:8000 -v trakko-data:/data \
   -e TRAKKO_PASSWORD='choose-a-password' \
   -e TRAKKO_SECRET_KEY='<a long random value>' \
-  ghcr.io/<owner>/trakko:latest
+  ghcr.io/pernastefano/trakko:latest
 ```
 
 Keep `/data` on a volume. Production needs HTTPS behind a reverse proxy; see

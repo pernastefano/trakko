@@ -4,8 +4,6 @@ TRAKKO runs as one container (or one Uvicorn process) with one SQLite file. The 
 built and published to the GitHub Container Registry (GHCR) by GitHub Actions; you never need
 Docker to develop it.
 
-Replace `<owner>` below with the GitHub account or organization that owns the repository.
-
 ## Run the container
 
 ```bash
@@ -15,7 +13,7 @@ docker run -d --name trakko \
   -e TRAKKO_PASSWORD='choose-a-password' \
   -e TRAKKO_SECRET_KEY='<a long random value>' \
   --restart unless-stopped \
-  ghcr.io/<owner>/trakko:latest
+  ghcr.io/pernastefano/trakko:latest
 ```
 
 Open `http://localhost:8000`. Generate a secret key with:
@@ -44,7 +42,7 @@ logging in.
 ```yaml
 services:
   trakko:
-    image: ghcr.io/<owner>/trakko:latest
+    image: ghcr.io/pernastefano/trakko:latest
     restart: unless-stopped
     ports:
       - "8000:8000"
@@ -99,7 +97,7 @@ Never put these values in an image, a repository or a public issue.
 ## Upgrading
 
 ```bash
-docker pull ghcr.io/<owner>/trakko:<version>
+docker pull ghcr.io/pernastefano/trakko:<version>
 docker stop trakko && docker rm trakko
 # run the same `docker run ...` command again (the volume keeps your data)
 ```
