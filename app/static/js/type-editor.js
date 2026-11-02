@@ -1,6 +1,7 @@
 import { createEventType, deleteEventType, updateEventType } from "./api.js";
 import { confirmAction } from "./confirm.js";
 import { element } from "./dom.js";
+import { createEmojiPicker } from "./emoji-picker.js";
 import { createMarker } from "./markers.js";
 
 const PALETTE = [
@@ -8,10 +9,7 @@ const PALETTE = [
   "#eab308", "#22c55e", "#14b8a6", "#78716c", "#6b7280", "#111827",
 ];
 
-const ICON_FIELDS = {
-  emoji: { label: "Emoji", maxLength: 16 },
-  text: { label: "Letter or number (1–2 characters)", maxLength: 2 },
-};
+const TEXT_ICON_LENGTH = 2;
 
 /**
  * Dialog to create or edit an Event Type: name, color (palette or custom) and icon.
@@ -28,11 +26,13 @@ export function createTypeEditor({ onChange }) {
   const iconField = document.getElementById("type-icon-field");
   const iconLabel = document.getElementById("type-icon-label");
   const iconValue = document.getElementById("type-icon-value");
+  const emojiButton = document.getElementById("type-emoji-button");
   const error = document.getElementById("type-error");
   const saveButton = document.getElementById("type-save");
   const deleteButton = document.getElementById("type-delete");
 
-  const state = { trackId: null, eventType: null, color: PALETTE[0] };
+  const emojiPicker = createEmojiPicker();
+  const state = { trackId: null, eventType: null, color: PALETTE[0], emoji: "" };
   let busy = false;
 
   function iconKind() {
@@ -44,24 +44,43 @@ export function createTypeEditor({ onChange }) {
     error.hidden = !message;
   }
 
-  function renderPreview() {
+  /** The icon text for the selected kind: a picked emoji, typed letters/digits, or nothing. */
+  function iconText() {
     const kind = iconKind();
+    if (kind === "emoji") return state.emoji;
+    return kind === "text" ? iconValue.value.trim() : "";
+  }
+
+  function renderPreview() {
     const marker = createMarker({
       color: state.color,
-      icon_kind: kind,
-      icon_value: kind === "none" ? "" : iconValue.value,
+      icon_kind: iconKind(),
+      icon_value: iconText(),
     });
     preview.style.backgroundColor = marker.style.backgroundColor;
     preview.style.color = marker.style.color;
     preview.textContent = marker.textContent;
   }
 
+  function renderEmojiButton() {
+    emojiButton.replaceChildren(
+      ...(state.emoji
+        ? [element("span", "emoji-current", state.emoji), element("span", "", "Change")]
+        : [element("span", "", "Choose an emoji")]),
+    );
+  }
+
+  /** Emoji are picked from a list; letters and digits are typed. */
   function renderIconField() {
     const kind = iconKind();
     iconField.hidden = kind === "none";
+    emojiButton.hidden = kind !== "emoji";
+    iconValue.hidden = kind !== "text";
     if (kind === "none") return;
-    iconLabel.textContent = ICON_FIELDS[kind].label;
-    iconValue.maxLength = ICON_FIELDS[kind].maxLength;
+    iconLabel.textContent = kind === "emoji" ? "Emoji" : "Letter or number (1–2 characters)";
+    iconLabel.htmlFor = kind === "emoji" ? emojiButton.id : iconValue.id;
+    iconValue.maxLength = TEXT_ICON_LENGTH;
+    renderEmojiButton();
   }
 
   function setColor(color, { fromCustom = false } = {}) {
@@ -95,7 +114,8 @@ export function createTypeEditor({ onChange }) {
     name.value = eventType?.name ?? "";
     const kind = eventType?.icon_kind ?? "none";
     form.querySelector(`input[name="icon-kind"][value="${kind}"]`).checked = true;
-    iconValue.value = eventType?.icon_value ?? "";
+    state.emoji = kind === "emoji" ? eventType.icon_value : "";
+    iconValue.value = kind === "text" ? eventType.icon_value : "";
     renderIconField();
     setColor(eventType?.color ?? PALETTE[0]);
   }
@@ -131,12 +151,11 @@ export function createTypeEditor({ onChange }) {
     event.preventDefault();
     if (busy) return;
     const kind = iconKind();
-    const data = {
-      name: name.value,
-      color: state.color,
-      icon_kind: kind,
-      icon_value: kind === "none" ? "" : iconValue.value.trim(),
-    };
+    if (kind === "emoji" && !state.emoji) {
+      showError("Choose an emoji, or pick another icon type.");
+      return;
+    }
+    const data = { name: name.value, color: state.color, icon_kind: kind, icon_value: iconText() };
     run(() =>
       state.eventType
         ? updateEventType(state.eventType.id, data)
@@ -161,10 +180,20 @@ export function createTypeEditor({ onChange }) {
   form.addEventListener("change", (event) => {
     if (event.target.name !== "icon-kind") return;
     iconValue.value = "";
+    state.emoji = "";
+    showError(null);
     renderIconField();
     renderPreview();
   });
   iconValue.addEventListener("input", renderPreview);
+  emojiButton.addEventListener("click", async () => {
+    const chosen = await emojiPicker.choose(state.emoji);
+    if (!chosen) return;
+    state.emoji = chosen;
+    showError(null);
+    renderEmojiButton();
+    renderPreview();
+  });
   customColor.addEventListener("input", () => setColor(customColor.value, { fromCustom: true }));
   document.getElementById("type-close").addEventListener("click", () => dialog.close());
   dialog.addEventListener("click", (event) => {

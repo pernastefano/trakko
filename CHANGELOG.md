@@ -56,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   listed in `requirements.txt`.
 
 ### Changed
+- Event Type emoji are now picked from a list in a bottom sheet (grouped, filtered to what the
+  device can draw) instead of being typed into a text field. The API still accepts any emoji.
 - API validation messages no longer start with pydantic's "Value error, " prefix.
 - The service worker no longer stores copies of `/api/v1/export`; signing out also clears the
   cached API responses.

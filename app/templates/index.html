@@ -199,6 +199,7 @@
         <div id="type-icon-field" hidden>
           <label id="type-icon-label" for="type-icon-value"></label>
           <input id="type-icon-value" class="text-input" type="text" autocomplete="off">
+          <button id="type-emoji-button" type="button" class="secondary-btn emoji-button" hidden></button>
         </div>
       </fieldset>
 
@@ -208,6 +209,18 @@
         <button id="type-save" type="submit" class="primary-btn">Save</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="emoji-picker" class="sheet" aria-labelledby="emoji-picker-title">
+    <div class="sheet-header">
+      <h2 id="emoji-picker-title" class="sheet-title">Choose an emoji</h2>
+      <button id="emoji-close" type="button" class="icon-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <div id="emoji-groups" class="emoji-groups"></div>
+    </div>
   </dialog>
 
   <dialog id="confirm-dialog" class="sheet" aria-labelledby="confirm-title" aria-describedby="confirm-message">

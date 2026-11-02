@@ -44,8 +44,10 @@ The app follows your phone's light or dark mode.
 3. Tap **Add event type** and fill in:
    - **Name**, for example "Running".
    - **Color**: pick one of the colors or choose **Custom color**.
-   - **Icon**: **None** (just the colored dot), **Emoji** (for example 🏃), or **Letter or number**
-     (one or two characters, such as `G` or `7`). The preview next to the name shows the result.
+   - **Icon**: **None** (just the colored dot), **Emoji**, or **Letter or number** (one or two
+     characters, such as `G` or `7`). For an emoji, tap **Choose an emoji** and pick one from the
+     list; you do not type it. The list shows only emoji your device can display. The preview next
+     to the name shows the result.
 4. Tap **Save**.
 
 Each Track has its own Event Types; a Track needs at least one before you can log anything in it.

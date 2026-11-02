@@ -10,7 +10,7 @@ from typing import get_args
 
 import pytest
 
-from app.schemas import NOTE_MAX_LENGTH, Period
+from app.schemas import NOTE_MAX_LENGTH, Period, check_icon
 from app.services.pwa import STATIC_DIR, TEMPLATES_DIR
 
 JS_DIR = STATIC_DIR / "js"
@@ -203,3 +203,41 @@ def test_bar_chart_granularities_match_the_api() -> None:
     charts = (JS_DIR / "charts.js").read_text()
 
     assert 'granularity === "week"' in charts  # the API only returns "week" or "month"
+
+
+# --- emoji picker ---
+
+
+def emoji_groups() -> dict[str, list[str]]:
+    source = (JS_DIR / "emoji-data.js").read_text()
+    groups = re.findall(r'name: "([^"]+)",\s*emojis:\s*"([^"]+)"', source)
+    return {name: emojis.split(" ") for name, emojis in groups}
+
+
+def test_every_picker_emoji_is_accepted_by_the_api() -> None:
+    groups = emoji_groups()
+    assert len(groups) >= 5
+    for name, emojis in groups.items():
+        assert emojis, f"group {name} is empty"
+        for emoji in emojis:
+            check_icon("emoji", emoji)  # raises ValueError if the API would reject it
+
+
+def test_picker_emoji_are_unique_and_single_symbols() -> None:
+    every = [emoji for emojis in emoji_groups().values() for emoji in emojis]
+
+    assert len(every) == len(set(every)), "an emoji is listed twice"
+    assert all("‍" not in emoji for emoji in every), "joined sequences are not widely supported"
+    assert all(not emoji.isascii() for emoji in every)
+
+
+def test_emoji_are_picked_not_typed() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+    editor = (JS_DIR / "type-editor.js").read_text()
+
+    assert re.search(r'<button id="type-emoji-button" type="button"[^>]*\bhidden\b', html)
+    for control in ("emoji-picker", "emoji-groups", "emoji-close"):
+        assert f'id="{control}"' in html
+    # For the emoji kind the value comes from the picker, never from the text input.
+    assert 'if (kind === "emoji") return state.emoji;' in editor
+    assert "emojiPicker.choose" in editor

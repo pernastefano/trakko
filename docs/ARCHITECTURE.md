@@ -139,6 +139,7 @@ events.
 | `calendar.js`, `dates.js`, `markers.js` | Day/Week/Month views, date arithmetic on `YYYY-MM-DD` strings, entry markers. |
 | `editor.js` | Bottom sheet to add, edit and delete the entries of a day. |
 | `settings.js`, `type-editor.js`, `confirm.js`, `data-transfer.js` | Settings screens, Event Type dialog, confirmations, JSON export/import. |
+| `emoji-picker.js`, `emoji-data.js` | Emoji chosen from a list (a bottom sheet) instead of typed; only emoji the device can draw are shown. |
 | `stats.js`, `charts.js` | Statistics screen; SVG bar chart and heatmap. |
 | `views.js`, `offline.js`, `pwa.js`, `dom.js` | Hash routing, offline banner, service worker registration, DOM helpers. |
 
