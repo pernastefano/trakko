@@ -31,7 +31,24 @@
 
   <main class="content">
     <section id="view-home" data-view="home" aria-label="Calendar">
-      <p class="placeholder">The calendar will appear here.</p>
+      <div class="cal-controls">
+        <div class="segmented" role="group" aria-label="Calendar view">
+          <button type="button" data-cal-view="day" aria-pressed="false">Day</button>
+          <button type="button" data-cal-view="week" aria-pressed="false">Week</button>
+          <button type="button" data-cal-view="month" aria-pressed="true">Month</button>
+        </div>
+        <button id="cal-today" type="button" class="text-btn">Today</button>
+      </div>
+      <div class="cal-nav">
+        <button id="cal-prev" type="button" class="icon-btn" aria-label="Previous period">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <h2 id="cal-title" class="cal-title" aria-live="polite"></h2>
+        <button id="cal-next" type="button" class="icon-btn" aria-label="Next period">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div id="cal-body" class="cal-body"></div>
     </section>
     <section id="view-stats" data-view="stats" aria-label="Statistics" hidden>
       <p class="placeholder">Statistics will appear here.</p>

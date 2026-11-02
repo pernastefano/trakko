@@ -27,3 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   content-hashed cache name and uses network-first for `/api/*` (read-only copies of GET
   responses are used when offline).
 - `jinja2` runtime dependency.
+- Calendar on the home screen with Day, Week and Month views (default Month, Monday first),
+  swipe/arrow navigation, "Today" button, today highlight and per-Track entry markers (icon or
+  color dot, "+n" when a month cell has more than three). Tapping a day dispatches a
+  `trakko:day-tap` event for the day editor.
+- Static consistency tests for the JavaScript modules (imports, element ids).

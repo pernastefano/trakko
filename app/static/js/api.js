@@ -48,3 +48,13 @@ export function login(password) {
 export function listTracks() {
   return request("GET", "/tracks");
 }
+
+export function listEventTypes(trackId) {
+  return request("GET", `/tracks/${trackId}/event-types`);
+}
+
+/** Entries of a Track between two dates (inclusive, "YYYY-MM-DD"). */
+export function listEntries({ trackId, from, to }) {
+  const query = new URLSearchParams({ track_id: trackId, from, to });
+  return request("GET", `/entries?${query}`);
+}

@@ -10,7 +10,7 @@ function currentView() {
 /** Switch between Home, Statistics and Settings following the URL hash. */
 export function initViews() {
   const trackBar = document.getElementById("track-bar");
-  const sections = document.querySelectorAll("[data-view]");
+  const sections = document.querySelectorAll(".content > [data-view]");
   const links = document.querySelectorAll("[data-nav]");
 
   function show() {

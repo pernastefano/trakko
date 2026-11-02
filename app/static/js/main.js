@@ -1,5 +1,6 @@
 import { listTracks } from "./api.js";
 import { ensureAuthenticated } from "./auth.js";
+import { createCalendar } from "./calendar.js";
 import { initOfflineBanner } from "./offline.js";
 import { registerServiceWorker } from "./pwa.js";
 import { createTrackSelector } from "./tracks.js";
@@ -8,13 +9,8 @@ import { initViews } from "./views.js";
 const app = document.getElementById("app");
 const loadError = document.getElementById("load-error");
 const loadErrorMessage = document.getElementById("load-error-message");
-const homeView = document.getElementById("view-home");
-
-const trackSelector = createTrackSelector({
-  onChange(track) {
-    homeView.dataset.trackId = track.id;
-  },
-});
+const calendar = createCalendar();
+const trackSelector = createTrackSelector({ onChange: (track) => calendar.setTrack(track) });
 
 function showLoadError(message) {
   loadErrorMessage.textContent = message;

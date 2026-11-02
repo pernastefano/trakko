@@ -12,9 +12,12 @@ and log **Entries** on a calendar with an optional short note.
 - Installable PWA (manifest, icons, iOS meta tags, safe-area insets), light and dark mode.
 - App shell cached by a versioned service worker; offline banner when the server is unreachable.
 - Track selector with arrows, swipe and a "2/5" indicator, and a bottom navigation bar.
+- Calendar with Day, Week and Month views (Month by default, weeks start on Monday): swipe or use
+  the arrows to change period, "Today" to jump back, today highlighted, and colored markers/icons
+  for the entries of the current Track.
 - REST API for Tracks, Event Types, Entries, statistics and JSON export/import.
 
-The calendar, day editor, settings and statistics screens are still to come.
+The day editor, settings and statistics screens are still to come.
 
 ## Quick start (local)
 
