@@ -494,6 +494,10 @@ input {
   color: var(--muted);
 }
 
+.month-day.is-outside.is-today .month-number {
+  color: var(--accent-text);
+}
+
 .month-day.is-outside .markers {
   opacity: 0.5;
 }

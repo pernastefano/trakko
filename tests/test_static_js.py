@@ -484,3 +484,12 @@ def test_the_other_themes_fill_complete_rows_of_two() -> None:
     assert themes[0] == "auto"
     assert len(themes) - 1 == 6, "with Automatic on its own row, six themes make three rows of two"
     assert "minmax(152px, 1fr)" in grid.group(1)
+
+
+def test_today_stays_readable_when_it_is_shown_as_a_day_of_a_neighboring_month() -> None:
+    css = (STATIC_DIR / "css" / "app.css").read_text()
+
+    # Outside days use the muted color for their number; today's highlighted circle must not.
+    rule = re.search(r"\.month-day\.is-outside\.is-today \.month-number \{([^}]*)\}", css)
+    assert rule and "color: var(--accent-text)" in rule.group(1)
+    assert css.index(".month-day.is-outside .month-number") < css.index(rule.group(0))

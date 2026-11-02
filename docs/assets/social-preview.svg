@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-label="TRAKKO: track the little things that make your days">
+<title>TRAKKO</title>
+<rect width="1280" height="640" fill="#0e1012"/>
+<defs><radialGradient id="g" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#f2a431" stop-opacity="0.16"/><stop offset="1" stop-color="#f2a431" stop-opacity="0"/></radialGradient></defs><circle cx="990" cy="320" r="420" fill="url(#g)"/><g transform="translate(88 96) scale(0.29296875)"><rect width="512" height="512" rx="112" fill="#1f2327"/><rect x="123" y="133" width="266" height="61" fill="#ede9e2"/><rect x="225" y="194" width="62" height="185" fill="#ede9e2"/><circle cx="369" cy="359" r="33" fill="#f2a431"/></g><text x="88" y="360" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="132" font-weight="800" letter-spacing="2" fill="#ede9e2">TRAKKO</text><text x="92" y="432" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="500" fill="#ede9e2">Tap a day. Log what happened.</text><text x="92" y="484" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="40" font-weight="500" fill="#f2a431">See the patterns.</text><rect x="88" y="540" width="73" height="44" rx="22" fill="#181b1f" stroke="#2b2f34" stroke-width="2"/>
+<text x="125" y="570" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="600" fill="#9b968d">PWA</text>
+<rect x="175" y="540" width="176" height="44" rx="22" fill="#181b1f" stroke="#2b2f34" stroke-width="2"/>
+<text x="262" y="570" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="600" fill="#9b968d">Self-hosted</text>
+<rect x="363" y="540" width="163" height="44" rx="22" fill="#181b1f" stroke="#2b2f34" stroke-width="2"/>
+<text x="445" y="570" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="600" fill="#9b968d">Multi-user</text>
+<rect x="539" y="540" width="137" height="44" rx="22" fill="#181b1f" stroke="#2b2f34" stroke-width="2"/>
+<text x="608" y="570" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="22" font-weight="600" fill="#9b968d">6 themes</text>
+<rect x="780" y="68" width="420" height="505" rx="26" fill="#181b1f" stroke="#2b2f34" stroke-width="2"/>
+<text x="990.0" y="116" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="32" font-weight="700" fill="#ede9e2">October 2026</text>
+<text x="810" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Mon</text>
+<text x="870" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Tue</text>
+<text x="930" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Wed</text>
+<text x="990" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Thu</text>
+<text x="1050" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Fri</text>
+<text x="1110" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Sat</text>
+<text x="1170" y="145" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="600" fill="#9b968d">Sun</text>
+<text x="810" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#9b968d" opacity="0.5">28</text>
+<text x="870" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#9b968d" opacity="0.5">29</text>
+<text x="930" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#9b968d" opacity="0.5">30</text>
+<text x="990" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">1</text>
+<circle cx="990" cy="224" r="8" fill="#3b82f6"/>
+<text x="1050" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">2</text>
+<circle cx="1050" cy="224" r="8" fill="#22c55e"/>
+<text x="1110" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">3</text>
+<circle cx="1100" cy="224" r="8" fill="#f97316"/>
+<circle cx="1120" cy="224" r="8" fill="#06b6d4"/>
+<text x="1170" y="201" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">4</text>
+<text x="810" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">5</text>
+<circle cx="800" cy="290" r="8" fill="#f97316"/>
+<circle cx="820" cy="290" r="8" fill="#3b82f6"/>
+<text x="870" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">6</text>
+<text x="930" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">7</text>
+<text x="990" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">8</text>
+<circle cx="980" cy="290" r="8" fill="#3b82f6"/>
+<circle cx="1000" cy="290" r="8" fill="#22c55e"/>
+<text x="1050" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">9</text>
+<circle cx="1050" cy="290" r="8" fill="#f97316"/>
+<text x="1110" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">10</text>
+<text x="1170" y="267" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">11</text>
+<circle cx="1170" cy="290" r="8" fill="#f97316"/>
+<text x="810" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">12</text>
+<circle cx="810" cy="356" r="8" fill="#22c55e"/>
+<text x="870" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">13</text>
+<text x="930" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">14</text>
+<circle cx="930" cy="356" r="8" fill="#f97316"/>
+<text x="990" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">15</text>
+<circle cx="990" cy="356" r="8" fill="#3b82f6"/>
+<text x="1050" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">16</text>
+<text x="1110" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">17</text>
+<circle cx="1110" cy="356" r="8" fill="#22c55e"/>
+<text x="1170" y="333" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">18</text>
+<circle cx="1170" cy="356" r="8" fill="#f97316"/>
+<text x="810" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">19</text>
+<circle cx="810" cy="422" r="8" fill="#3b82f6"/>
+<text x="870" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">20</text>
+<text x="930" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">21</text>
+<circle cx="930" cy="422" r="8" fill="#f97316"/>
+<circle cx="990" cy="392" r="20" fill="#f2a431"/>
+<text x="990" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="700" fill="#1c1403">22</text>
+<circle cx="980" cy="422" r="8" fill="#f97316"/>
+<circle cx="1000" cy="422" r="8" fill="#3b82f6"/>
+<text x="1050" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">23</text>
+<text x="1110" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">24</text>
+<circle cx="1110" cy="422" r="8" fill="#06b6d4"/>
+<text x="1170" y="399" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">25</text>
+<circle cx="1160" cy="422" r="8" fill="#f97316"/>
+<circle cx="1180" cy="422" r="8" fill="#22c55e"/>
+<text x="810" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">26</text>
+<text x="870" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">27</text>
+<text x="930" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">28</text>
+<circle cx="930" cy="488" r="8" fill="#f97316"/>
+<text x="990" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">29</text>
+<circle cx="990" cy="488" r="8" fill="#3b82f6"/>
+<text x="1050" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">30</text>
+<circle cx="1050" cy="488" r="8" fill="#f97316"/>
+<text x="1110" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#ede9e2">31</text>
+<circle cx="1110" cy="488" r="8" fill="#f97316"/>
+<text x="1170" y="465" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif" font-size="20" font-weight="500" fill="#9b968d" opacity="0.5">1</text>
+</svg>

@@ -43,6 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Static consistency tests for the JavaScript modules (imports, element ids, editor, settings and
   statistics markup, service worker cache rules).
 
+- README rewritten with a banner, real screenshots, a feature tour and honest notes on limits; the
+  images, an SVG banner and a 1280x640 social preview for GitHub live in `docs/assets/`.
+- Tests for the README: images exist with the right size and alt text, SVGs are valid and contain no
+  scripts, and links and anchors resolve.
 - Documentation: `docs/ARCHITECTURE.md` (components, data model, request flow, service worker),
   `docs/USER_GUIDE.md`, `docs/DEPLOYMENT.md`, `docs/DEVELOPMENT.md`, `CONTRIBUTING.md`, and a
   complete README (badges, features, container usage, configuration, documentation index).
@@ -76,6 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   from the stylesheet, so new themes add theirs). The custom color picker is gone; an older custom
   color stays selected as "Current color" until another one is chosen.
 - Month view: larger cells drawn as a bordered grid.
+- Month view: today's number stays readable when it is shown as a day of a neighboring month.
 - Static files are always revalidated (`Cache-Control: no-cache` with an ETag), and the page reloads
   once when a new service worker takes over, so a page never runs scripts from another version.
 - The session cookie now also carries a fingerprint of the user's password hash, so a password
