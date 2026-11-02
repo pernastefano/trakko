@@ -14,6 +14,19 @@ from app.services.pwa import STATIC_DIR
 
 API_PREFIX = "/api/v1"
 
+
+class RevalidatedStaticFiles(StaticFiles):
+    """Static files that browsers must revalidate (ETag) before reusing a cached copy.
+
+    Without this a browser may keep an old script for a while and run it against a new page.
+    """
+
+    def file_response(self, *args, **kwargs):
+        response = super().file_response(*args, **kwargs)
+        response.headers["Cache-Control"] = "no-cache"
+        return response
+
+
 logger = logging.getLogger("uvicorn.error")
 
 mimetypes.add_type("application/manifest+json", ".webmanifest")
@@ -56,7 +69,7 @@ def create_app() -> FastAPI:
     api.include_router(protected)
     app.include_router(api)
     app.include_router(pwa.router)
-    app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+    app.mount("/static", RevalidatedStaticFiles(directory=STATIC_DIR), name="static")
 
     @app.get("/health", include_in_schema=False)
     def health() -> dict[str, str]:

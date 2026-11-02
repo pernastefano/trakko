@@ -58,7 +58,8 @@ The default look is dark graphite with amber highlights. You can change it in **
 2. Under **Tracks**, type a name in **New Track** and tap **Add**. You land on the new Track's page.
 3. Tap **Add event type** and fill in:
    - **Name**, for example "Running".
-   - **Color**: pick one of the colors or choose **Custom color**.
+   - **Color**: tap one of the colors. The second group, **Theme backgrounds**, has the background
+     and surface colors of every theme (useful for a marker that blends with the app).
    - **Icon**: **None** (just the colored dot), **Emoji**, or **Letter or number** (one or two
      characters, such as `G` or `7`). For an emoji, tap **Choose an emoji** and pick one from the
      list; you do not type it. The list shows only emoji your device can display. The preview next
@@ -98,8 +99,8 @@ Switch between **Day**, **Week** and **Month** with the control at the top (Mont
   month, week or day.
 - **Today** jumps back to the current date. Today is highlighted.
 - Weeks start on **Monday**.
-- Month view shows up to three markers per day; more are shown as `+2`, `+3`, and so on. Open the
-  day to see everything.
+- Month view is a grid of bordered days. It shows up to three markers per day; more are shown as
+  `+2`, `+3`, and so on. Open the day to see everything.
 - Only the entries of the current Track are shown. Days of the neighboring months are dimmed but can
   be tapped too.
 
@@ -128,8 +129,8 @@ In **Settings → Data**:
 
 ### Appearance
 
-**Settings → Appearance** lets you pick a theme: **Automatic** (the default look, or a light one when
-your phone is set to light mode), **Graphite**, **Midnight**, **Forest** and **Ember** (dark), and
+**Settings → Appearance** lets you pick a theme. **Automatic** (the full-width card at the top) is the
+default look, or a light one when your phone is set to light mode; below it are **Graphite**, **Midnight**, **Forest** and **Ember** (dark), and
 **Paper** and **Sand** (light). The change is immediate. It is remembered on this device only, so
 each phone or computer can have its own.
 
@@ -145,8 +146,9 @@ each phone or computer can have its own.
 
 ### Credits
 
-The last section of Settings credits the author, Stefano Perna, and links to the project on GitHub
-(https://github.com/pernastefano/trakko).
+The last section of Settings has two links: the **Project** (TRAKKO, on GitHub:
+https://github.com/pernastefano/trakko/) and its **Author** (Stefano Perna:
+https://github.com/pernastefano/).
 
 ## Working offline
 

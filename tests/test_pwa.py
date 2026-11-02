@@ -164,3 +164,19 @@ def test_render_service_worker(dirs: tuple[Path, Path]) -> None:
 
     assert f'"{pwa.asset_version(static, templates)}"' in script
     assert 'const PRECACHE_URLS = ["/", "/static/js/main.js"];' in script
+
+
+def test_static_files_must_be_revalidated(client: TestClient) -> None:
+    for url in ("/static/js/main.js", "/static/css/app.css", "/static/manifest.webmanifest"):
+        response = client.get(url)
+
+        assert response.headers["cache-control"] == "no-cache", url
+        assert response.headers["etag"], f"{url} needs an ETag to be revalidated cheaply"
+
+
+def test_static_files_answer_304_when_unchanged(client: TestClient) -> None:
+    first = client.get("/static/js/main.js")
+
+    again = client.get("/static/js/main.js", headers={"If-None-Match": first.headers["etag"]})
+
+    assert again.status_code == 304

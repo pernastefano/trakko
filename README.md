@@ -20,7 +20,7 @@ each with their own account and their own data.
   use the arrows to change period; "Today" jumps back. Entries show as colored markers or icons.
 - **Fast logging:** tap a day, tap an Event Type, Save, with an optional note. Edit or delete
   entries from the same sheet.
-- **Tracks and Event Types** with names, colors (palette or custom) and icons (none, emoji, or one
+- **Tracks and Event Types** with names, colors (a palette that includes the theme backgrounds) and icons (none, emoji, or one
   or two letters/digits). Reorder them, choose the default Track, delete with a confirmation that
   shows what will be lost.
 - **Statistics** per Track and period (month, year, all): count per Event Type, current and longest

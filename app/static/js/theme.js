@@ -1,11 +1,11 @@
 export const THEMES = [
-  { id: "auto", name: "Automatic", hint: "Follows your device" },
-  { id: "graphite", name: "Graphite", hint: "Dark, amber" },
-  { id: "midnight", name: "Midnight", hint: "Dark, sky blue" },
-  { id: "forest", name: "Forest", hint: "Dark, green" },
-  { id: "ember", name: "Ember", hint: "Dark, coral" },
-  { id: "paper", name: "Paper", hint: "Light, amber" },
-  { id: "sand", name: "Sand", hint: "Light, teal" },
+  { id: "auto", name: "Automatic" },
+  { id: "graphite", name: "Graphite" },
+  { id: "midnight", name: "Midnight" },
+  { id: "forest", name: "Forest" },
+  { id: "ember", name: "Ember" },
+  { id: "paper", name: "Paper" },
+  { id: "sand", name: "Sand" },
 ];
 
 // The same key is read by theme-init.js before the page is drawn.

@@ -70,6 +70,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   password and ends the user's other sessions.
 
 ### Changed
+- Credits have two links: the project (TRAKKO) and the author (Stefano Perna), each to its GitHub page.
+- Appearance: the theme cards show only the name, and Automatic takes the whole row.
+- Event Type colors: a palette of 24 colors plus the background and surface color of every theme (read
+  from the stylesheet, so new themes add theirs). The custom color picker is gone; an older custom
+  color stays selected as "Current color" until another one is chosen.
+- Month view: larger cells drawn as a bordered grid.
+- Static files are always revalidated (`Cache-Control: no-cache` with an ETag), and the page reloads
+  once when a new service worker takes over, so a page never runs scripts from another version.
 - The session cookie now also carries a fingerprint of the user's password hash, so a password
   change invalidates the old cookies.
 - Credits now show only Stefano Perna, linking to the GitHub repository; the About text and the

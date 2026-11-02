@@ -14,7 +14,8 @@ function swatch(theme) {
 }
 
 function option(theme, checked) {
-  const label = element("label", "theme-option");
+  // "Automatic" is the default choice: it takes the whole row, the others share it two by two.
+  const label = element("label", theme.id === "auto" ? "theme-option theme-option-wide" : "theme-option");
   const input = element("input", "theme-input");
   input.type = "radio";
   input.name = "theme";
@@ -22,10 +23,8 @@ function option(theme, checked) {
   input.checked = checked;
   input.addEventListener("change", () => chooseTheme(theme.id));
 
-  const text = element("span", "theme-label");
-  text.append(element("span", "", theme.name), element("span", "theme-hint", theme.hint));
   const card = element("span", "theme-card");
-  card.append(swatch(theme), text);
+  card.append(swatch(theme), element("span", "theme-name", theme.name));
   label.append(input, card);
   return label;
 }

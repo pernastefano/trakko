@@ -449,13 +449,20 @@ input {
 .month {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 2px;
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  /* The 1px gaps show this color: that is what draws the grid lines. */
+  background: var(--border);
 }
 
 .month-weekday {
-  padding: 4px 0;
+  padding: 8px 0;
+  background: var(--surface);
   color: var(--muted);
   font-size: 0.75rem;
+  font-weight: 600;
   text-align: center;
 }
 
@@ -463,29 +470,45 @@ input {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  min-height: 58px;
-  padding: 4px 0;
+  gap: 4px;
+  min-height: 68px;
+  padding: 6px 0 4px;
   border: 0;
-  border-radius: 8px;
-  background: transparent;
+  border-radius: 0;
+  background: var(--surface);
 }
 
 .month-day:hover {
   background: var(--bg);
 }
 
+.month-day:focus-visible {
+  outline-offset: -3px;
+}
+
 .month-day.is-outside {
-  opacity: 0.4;
+  background: var(--bg);
+}
+
+.month-day.is-outside .month-number {
+  color: var(--muted);
+}
+
+.month-day.is-outside .markers {
+  opacity: 0.5;
+}
+
+.month-day .markers {
+  gap: 2px;
 }
 
 .month-number {
   display: grid;
   place-items: center;
-  min-width: 24px;
-  height: 24px;
-  border-radius: 12px;
-  font-size: 0.875rem;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 14px;
+  font-size: 0.9375rem;
 }
 
 .is-today .month-number {
@@ -1053,20 +1076,10 @@ input {
   outline-offset: 3px;
 }
 
-.custom-color {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: var(--touch);
-}
-
-.custom-color input {
-  width: var(--touch);
-  height: var(--touch);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  cursor: pointer;
+.swatch-group-label {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 0.8125rem;
 }
 
 .settings-row-main .marker {
@@ -1312,7 +1325,18 @@ input {
 }
 
 .credits {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.credits-label {
+  display: inline-block;
+  min-width: 64px;
+  color: var(--muted);
 }
 
 .credits a {
@@ -1395,14 +1419,10 @@ input {
   content: "";
 }
 
-.theme-label {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
+.theme-option-wide {
+  grid-column: 1 / -1;
 }
 
-.theme-hint {
-  color: var(--muted);
-  font-size: 0.75rem;
-  font-weight: 400;
+.theme-option-wide .theme-swatch {
+  width: 88px;
 }

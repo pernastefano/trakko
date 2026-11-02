@@ -3,16 +3,65 @@ import { confirmAction } from "./confirm.js";
 import { element } from "./dom.js";
 import { createEmojiPicker } from "./emoji-picker.js";
 import { createMarker } from "./markers.js";
+import { THEMES } from "./theme.js";
 
-const PALETTE = [
-  "#3b82f6", "#6366f1", "#a855f7", "#ec4899", "#ef4444", "#f97316",
-  "#eab308", "#22c55e", "#14b8a6", "#78716c", "#6b7280", "#111827",
+const COLORS = [
+  { name: "Red", value: "#ef4444" },
+  { name: "Rose", value: "#f43f5e" },
+  { name: "Pink", value: "#ec4899" },
+  { name: "Fuchsia", value: "#d946ef" },
+  { name: "Purple", value: "#a855f7" },
+  { name: "Violet", value: "#8b5cf6" },
+  { name: "Indigo", value: "#6366f1" },
+  { name: "Blue", value: "#3b82f6" },
+  { name: "Sky", value: "#0ea5e9" },
+  { name: "Cyan", value: "#06b6d4" },
+  { name: "Teal", value: "#14b8a6" },
+  { name: "Emerald", value: "#10b981" },
+  { name: "Green", value: "#22c55e" },
+  { name: "Lime", value: "#84cc16" },
+  { name: "Yellow", value: "#eab308" },
+  { name: "Amber", value: "#f59e0b" },
+  { name: "Orange", value: "#f97316" },
+  { name: "Salmon", value: "#fb7185" },
+  { name: "Peach", value: "#fdba74" },
+  { name: "Mint", value: "#6ee7b7" },
+  { name: "Light blue", value: "#93c5fd" },
+  { name: "Brown", value: "#a16207" },
+  { name: "Stone", value: "#78716c" },
+  { name: "Gray", value: "#6b7280" },
 ];
+const DEFAULT_COLOR = "#3b82f6";
+
+/**
+ * The background and surface colors of every theme, read from the stylesheet so that a new theme
+ * adds its colors here without touching this file.
+ */
+function themeBackgrounds() {
+  const probe = element("span");
+  probe.hidden = true;
+  document.body.append(probe);
+  const colors = [];
+  for (const theme of THEMES.filter((candidate) => candidate.id !== "auto")) {
+    probe.dataset.theme = theme.id;
+    const style = getComputedStyle(probe);
+    for (const [variable, label] of [["--bg", "background"], ["--surface", "surface"]]) {
+      colors.push({
+        name: `${theme.name} ${label}`,
+        value: style.getPropertyValue(variable).trim().toLowerCase(),
+      });
+    }
+  }
+  probe.remove();
+  return colors.filter(
+    (color, index) => /^#[0-9a-f]{6}$/.test(color.value) && colors.findIndex((other) => other.value === color.value) === index,
+  );
+}
 
 const TEXT_ICON_LENGTH = 2;
 
 /**
- * Dialog to create or edit an Event Type: name, color (palette or custom) and icon.
+ * Dialog to create or edit an Event Type: name, color (from a fixed palette) and icon.
  * Calls `onChange()` after it saved or deleted something.
  */
 export function createTypeEditor({ onChange }) {
@@ -22,7 +71,7 @@ export function createTypeEditor({ onChange }) {
   const name = document.getElementById("type-name");
   const preview = document.getElementById("type-preview");
   const swatches = document.getElementById("type-swatches");
-  const customColor = document.getElementById("type-color-custom");
+  const themeSwatches = document.getElementById("type-theme-swatches");
   const iconField = document.getElementById("type-icon-field");
   const iconLabel = document.getElementById("type-icon-label");
   const iconValue = document.getElementById("type-icon-value");
@@ -32,7 +81,7 @@ export function createTypeEditor({ onChange }) {
   const deleteButton = document.getElementById("type-delete");
 
   const emojiPicker = createEmojiPicker();
-  const state = { trackId: null, eventType: null, color: PALETTE[0], emoji: "" };
+  const state = { trackId: null, eventType: null, color: DEFAULT_COLOR, emoji: "" };
   let busy = false;
 
   function iconKind() {
@@ -83,31 +132,36 @@ export function createTypeEditor({ onChange }) {
     renderEmojiButton();
   }
 
-  function setColor(color, { fromCustom = false } = {}) {
+  function setColor(color) {
     state.color = color.toLowerCase();
-    customColor.value = state.color;
-    for (const radio of swatches.querySelectorAll("input")) {
-      radio.checked = !fromCustom && radio.value === state.color;
+    for (const radio of form.querySelectorAll('input[name="type-color"]')) {
+      radio.checked = radio.value === state.color;
     }
     renderPreview();
   }
 
-  function renderSwatches() {
-    swatches.replaceChildren(
-      ...PALETTE.map((color) => {
-        const label = element("label", "swatch");
-        const input = element("input");
-        input.type = "radio";
-        input.name = "type-color";
-        input.value = color;
-        input.setAttribute("aria-label", color);
-        input.addEventListener("change", () => setColor(color));
-        const dot = element("span");
-        dot.style.backgroundColor = color;
-        label.append(input, dot);
-        return label;
-      }),
-    );
+  function swatch({ name, value }) {
+    const label = element("label", "swatch");
+    const input = element("input");
+    input.type = "radio";
+    input.name = "type-color";
+    input.value = value;
+    input.setAttribute("aria-label", name);
+    input.title = name;
+    input.addEventListener("change", () => setColor(value));
+    const dot = element("span");
+    dot.style.backgroundColor = value;
+    label.append(input, dot);
+    return label;
+  }
+
+  /** Show the palette; a color that is no longer in it (older data) is offered first, as is. */
+  function renderSwatches(currentColor) {
+    const backgrounds = themeBackgrounds();
+    const known = [...COLORS, ...backgrounds].some((color) => color.value === currentColor);
+    const colors = known ? COLORS : [{ name: "Current color", value: currentColor }, ...COLORS];
+    swatches.replaceChildren(...colors.map(swatch));
+    themeSwatches.replaceChildren(...backgrounds.map(swatch));
   }
 
   function fill(eventType) {
@@ -117,7 +171,9 @@ export function createTypeEditor({ onChange }) {
     state.emoji = kind === "emoji" ? eventType.icon_value : "";
     iconValue.value = kind === "text" ? eventType.icon_value : "";
     renderIconField();
-    setColor(eventType?.color ?? PALETTE[0]);
+    const color = (eventType?.color ?? DEFAULT_COLOR).toLowerCase();
+    renderSwatches(color);
+    setColor(color);
   }
 
   /** Open for a new Event Type of `trackId`, or to edit `eventType`. */
@@ -194,12 +250,10 @@ export function createTypeEditor({ onChange }) {
     renderEmojiButton();
     renderPreview();
   });
-  customColor.addEventListener("input", () => setColor(customColor.value, { fromCustom: true }));
   document.getElementById("type-close").addEventListener("click", () => dialog.close());
   dialog.addEventListener("click", (event) => {
     if (event.target === dialog) dialog.close();
   });
 
-  renderSwatches();
   return { open };
 }

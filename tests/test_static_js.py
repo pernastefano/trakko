@@ -125,7 +125,7 @@ def test_settings_markup() -> None:
         "type-editor",
         "type-form",
         "type-swatches",
-        "type-color-custom",
+        "type-theme-swatches",
         "type-icon-value",
         "confirm-dialog",
         "confirm-accept",
@@ -143,15 +143,73 @@ def test_icon_kinds_in_the_editor_match_the_api() -> None:
     assert sorted(re.findall(r'name="icon-kind" value="(\w+)"', html)) == ["emoji", "none", "text"]
 
 
-def test_palette_colors_are_valid_hex_colors() -> None:
-    palette = re.search(
-        r"const PALETTE = \[(.*?)\];", (JS_DIR / "type-editor.js").read_text(), re.S
-    )
-    colors = re.findall(r'"([^"]+)"', palette.group(1))
+def palette() -> list[tuple[str, str]]:
+    source = (JS_DIR / "type-editor.js").read_text()
+    block = re.search(r"const COLORS = \[(.*?)\];", source, re.S).group(1)
+    return re.findall(r'\{ name: "([^"]+)", value: "([^"]+)" \}', block)
 
-    assert len(colors) >= 8
-    assert all(re.fullmatch(r"#[0-9a-f]{6}", color) for color in colors)
-    assert len(set(colors)) == len(colors)
+
+def test_palette_colors_are_valid_hex_colors() -> None:
+    colors = palette()
+
+    assert len(colors) >= 20
+    assert all(re.fullmatch(r"#[0-9a-f]{6}", value) for _, value in colors)
+    assert len({value for _, value in colors}) == len(colors), "a color is listed twice"
+    assert len({name for name, _ in colors}) == len(colors), "a name is used twice"
+
+
+def test_the_default_color_is_in_the_palette() -> None:
+    source = (JS_DIR / "type-editor.js").read_text()
+    default = re.search(r'const DEFAULT_COLOR = "([^"]+)"', source).group(1)
+
+    assert default in {value for _, value in palette()}
+
+
+def test_there_is_no_custom_color_picker() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+    editor = (JS_DIR / "type-editor.js").read_text()
+
+    assert 'type="color"' not in html and "Custom color" not in html
+    assert "customColor" not in editor and "type-color-custom" not in editor
+
+
+def test_theme_backgrounds_are_offered_as_colors() -> None:
+    """The colors of every theme's background and surface come from the stylesheet itself."""
+    html = (TEMPLATES_DIR / "index.html").read_text()
+    editor = (JS_DIR / "type-editor.js").read_text()
+
+    assert 'id="type-theme-swatches"' in html and "Theme backgrounds" in html
+    assert 'import { THEMES } from "./theme.js";' in editor
+    assert '["--bg", "background"]' in editor and '["--surface", "surface"]' in editor
+    # Every one of them is a plain #rrggbb color, which is what the API accepts.
+    css = (STATIC_DIR / "css" / "app.css").read_text()
+    for theme_id in re.findall(r'\{ id: "(\w+)"', (JS_DIR / "theme.js").read_text()):
+        if theme_id == "auto":
+            continue
+        block = re.search(rf'\[data-theme="{theme_id}"\] \{{([^}}]*)\}}', css).group(1)
+        for variable in ("--bg", "--surface"):
+            assert re.search(rf"{variable}: #[0-9a-f]{{6}};", block), (theme_id, variable)
+
+
+def test_palette_values_are_accepted_by_the_api() -> None:
+    from pydantic import TypeAdapter
+
+    from app.schemas import Color
+
+    for _, value in palette():
+        assert TypeAdapter(Color).validate_python(value) == value
+
+
+def test_month_view_is_a_bordered_grid_with_roomy_cells() -> None:
+    css = (STATIC_DIR / "css" / "app.css").read_text()
+    month = re.search(r"\.month \{([^}]*)\}", css).group(1)
+    day = re.search(r"\.month-day \{([^}]*)\}", css).group(1)
+
+    # The gap shows the container's background, which draws the lines between the days.
+    assert "gap: 1px" in month and "background: var(--border)" in month
+    assert "border-radius: 12px" in month
+    assert "background: var(--surface)" in day
+    assert int(re.search(r"min-height: (\d+)px", day).group(1)) >= 64
 
 
 def test_settings_routes_are_recognised_by_the_view_switcher() -> None:
@@ -247,6 +305,8 @@ def test_emoji_are_picked_not_typed() -> None:
 # --- accounts, about and credits ---
 
 REPOSITORY = "https://github.com/pernastefano/trakko"
+PROJECT_URL = "https://github.com/pernastefano/trakko/"
+AUTHOR_URL = "https://github.com/pernastefano/"
 
 
 def test_sign_in_form_markup() -> None:
@@ -279,13 +339,24 @@ def test_settings_show_the_account_and_the_credits() -> None:
 
     for control in ("account-name", "account-status", "logout-button", "change-password-button"):
         assert f'id="{control}"' in html, control
-    # The credits are a single name that links to the repository, nothing else.
-    credits = re.search(r'<h2 class="settings-heading">Credits</h2>\s*(.*?)\s*</div>', html, re.S)
+    # Credits: exactly two links, the project and its author, and nothing else.
+    credits = re.search(r'<h2 class="settings-heading">Credits</h2>\s*(.*?)\s*</ul>', html, re.S)
     assert credits, "Credits section missing"
     section = credits.group(1)
-    assert re.findall(r"<a [^>]*>([^<]*)</a>", section) == ["Stefano Perna"]
-    assert f'id="credits-link" href="{REPOSITORY}"' in section
-    assert re.sub(r"<[^>]+>", "", section).strip() == "Stefano Perna"
+    assert re.findall(r'<a [^>]*href="([^"]+)"[^>]*>([^<]*)</a>', section) == [
+        (PROJECT_URL, "TRAKKO"),
+        (AUTHOR_URL, "Stefano Perna"),
+    ]
+    assert 'id="credits-project-link"' in section and 'id="credits-author-link"' in section
+    labels = re.findall(r'<span class="credits-label">([^<]*)</span>', section)
+    assert labels == ["Project", "Author"]
+    assert re.sub(r"<[^>]+>", " ", section).split() == [
+        "Project",
+        "TRAKKO",
+        "Author",
+        "Stefano",
+        "Perna",
+    ]
 
 
 def test_there_is_no_other_about_text_or_github_button() -> None:
@@ -373,3 +444,43 @@ def test_password_change_request_matches_the_api() -> None:
 
     assert 'request("POST", "/auth/password"' in api
     assert "current_password: currentPassword" in api and "new_password: newPassword" in api
+
+
+def test_page_reloads_once_when_a_new_service_worker_takes_over() -> None:
+    source = (JS_DIR / "pwa.js").read_text()
+
+    assert 'addEventListener("controllerchange"' in source
+    assert "location.reload()" in source
+    # Not on the very first install, and never in a loop.
+    assert "wasControlled" in source and "reloading" in source
+
+
+# --- appearance picker ---
+
+
+def test_theme_cards_show_only_the_title() -> None:
+    themes = (JS_DIR / "theme.js").read_text()
+    appearance = (JS_DIR / "appearance.js").read_text()
+    css = (STATIC_DIR / "css" / "app.css").read_text()
+
+    assert "hint" not in themes and "hint" not in appearance
+    assert "theme-hint" not in css and "theme-label" not in css
+    assert 'element("span", "theme-name", theme.name)' in appearance
+
+
+def test_automatic_takes_the_whole_row() -> None:
+    appearance = (JS_DIR / "appearance.js").read_text()
+    css = (STATIC_DIR / "css" / "app.css").read_text()
+
+    assert 'theme.id === "auto" ? "theme-option theme-option-wide"' in appearance
+    wide = re.search(r"\.theme-option-wide \{([^}]*)\}", css).group(1)
+    assert "grid-column: 1 / -1" in wide
+
+
+def test_the_other_themes_fill_complete_rows_of_two() -> None:
+    themes = re.findall(r'\{ id: "(\w+)"', (JS_DIR / "theme.js").read_text())
+    grid = re.search(r"\.theme-options \{([^}]*)\}", (STATIC_DIR / "css" / "app.css").read_text())
+
+    assert themes[0] == "auto"
+    assert len(themes) - 1 == 6, "with Automatic on its own row, six themes make three rows of two"
+    assert "minmax(152px, 1fr)" in grid.group(1)

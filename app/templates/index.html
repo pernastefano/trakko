@@ -109,7 +109,10 @@
         <p id="account-status" class="settings-status" role="status" hidden></p>
 
         <h2 class="settings-heading">Credits</h2>
-        <p class="credits"><a id="credits-link" href="https://github.com/pernastefano/trakko" target="_blank" rel="noopener noreferrer">Stefano Perna</a></p>
+        <ul class="credits">
+          <li><span class="credits-label">Project</span> <a id="credits-project-link" href="https://github.com/pernastefano/trakko/" target="_blank" rel="noopener noreferrer">TRAKKO</a></li>
+          <li><span class="credits-label">Author</span> <a id="credits-author-link" href="https://github.com/pernastefano/" target="_blank" rel="noopener noreferrer">Stefano Perna</a></li>
+        </ul>
       </div>
 
       <div id="settings-track" class="settings-screen" hidden>
@@ -201,10 +204,8 @@
       <fieldset class="field-group">
         <legend>Color</legend>
         <div id="type-swatches" class="swatches"></div>
-        <label class="custom-color">
-          <input id="type-color-custom" type="color">
-          <span>Custom color</span>
-        </label>
+        <p class="swatch-group-label">Theme backgrounds</p>
+        <div id="type-theme-swatches" class="swatches"></div>
       </fieldset>
 
       <fieldset class="field-group">
