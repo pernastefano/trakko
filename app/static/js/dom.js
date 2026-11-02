@@ -18,3 +18,11 @@ export function icon(pathData) {
   svg.append(path);
   return svg;
 }
+
+/** Create an SVG element with the given attributes and optional text content. */
+export function svg(tag, attributes = {}, text) {
+  const node = document.createElementNS(SVG_NS, tag);
+  for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, value);
+  if (text !== undefined) node.textContent = text;
+  return node;
+}

@@ -37,8 +37,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Settings screens (`#/settings`, `#/settings/tracks/<id>`): manage Tracks and Event Types with
   reordering, default Track, color palette plus custom color, icon picker with live preview,
   confirmation dialogs that show what will be deleted, JSON export/import and sign out.
-- Static consistency tests for the JavaScript modules (imports, element ids, editor and settings
-  markup, service worker cache rules).
+- Statistics screen with month/year/all periods, per Event Type cards (count, streaks, days since
+  last entry, average interval), an SVG bar chart and an SVG activity heatmap.
+- `today` query parameter for `GET /stats`, so a past period can be shown while streaks and
+  "days since last" keep using the current day.
+- Static consistency tests for the JavaScript modules (imports, element ids, editor, settings and
+  statistics markup, service worker cache rules).
 
 ### Changed
 - API validation messages no longer start with pydantic's "Value error, " prefix.

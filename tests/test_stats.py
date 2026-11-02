@@ -195,3 +195,34 @@ def test_defaults_and_validation(client: TestClient, setup: dict) -> None:
     assert (
         client.get(f"{API}/stats", params={"track_id": track_id, "ref": "nope"}).status_code == 422
     )
+
+
+def test_today_is_independent_from_the_period_anchor(client: TestClient, setup: dict) -> None:
+    # Viewing October while today is 2026-11-10: counts follow ref, relative numbers follow today.
+    body = stats(client, setup["track"]["id"], period="month", ref="2026-10-15", today="2026-11-10")
+    types = by_name(body)
+
+    assert (body["start"], body["end"]) == ("2026-10-01", "2026-10-31")
+    assert types["Cycle Start"]["count"] == 1
+    assert types["Run"]["count"] == 0
+    assert types["Cycle Start"]["days_since_last"] == 14
+    assert types["Run"]["days_since_last"] == 0
+    assert types["Run"]["current_streak"] == 2
+
+
+def test_today_defaults_to_ref(client: TestClient, setup: dict) -> None:
+    body = stats(client, setup["track"]["id"], period="month", ref="2026-11-05")
+
+    run = by_name(body)["Run"]
+    assert (run["last_date"], run["days_since_last"]) == ("2026-11-02", 3)
+
+
+def test_ref_defaults_to_today(client: TestClient, setup: dict) -> None:
+    response = client.get(
+        f"{API}/stats",
+        params={"track_id": setup["track"]["id"], "period": "month", "today": "2026-11-10"},
+    )
+
+    body = response.json()
+    assert (body["start"], body["end"]) == ("2026-11-01", "2026-11-30")
+    assert by_name(body)["Run"]["days_since_last"] == 0

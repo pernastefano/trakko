@@ -5,6 +5,7 @@ import { createDayEditor } from "./editor.js";
 import { initOfflineBanner } from "./offline.js";
 import { registerServiceWorker } from "./pwa.js";
 import { createSettings } from "./settings.js";
+import { createStats } from "./stats.js";
 import { createTrackSelector } from "./tracks.js";
 import { initViews } from "./views.js";
 
@@ -12,8 +13,20 @@ const app = document.getElementById("app");
 const loadError = document.getElementById("load-error");
 const loadErrorMessage = document.getElementById("load-error-message");
 const calendar = createCalendar();
-const trackSelector = createTrackSelector({ onChange: (track) => calendar.setTrack(track) });
-createDayEditor({ currentTrack: trackSelector.current, onChange: calendar.refresh });
+const stats = createStats();
+const trackSelector = createTrackSelector({
+  onChange(track) {
+    calendar.setTrack(track);
+    stats.setTrack(track);
+  },
+});
+createDayEditor({
+  currentTrack: trackSelector.current,
+  onChange() {
+    calendar.refresh();
+    stats.invalidate();
+  },
+});
 const settings = createSettings();
 
 function showLoadError(message) {

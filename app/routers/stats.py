@@ -15,5 +15,7 @@ def get_stats(
     session: SessionDep,
     period: Period = "month",
     ref: IsoDate | None = None,
+    today: IsoDate | None = None,
 ):
-    return stats.get_stats(session, track_id, period, ref or dt.date.today())
+    ref = ref or today or dt.date.today()
+    return stats.get_stats(session, track_id, period, ref, today)

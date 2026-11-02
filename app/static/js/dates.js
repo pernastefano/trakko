@@ -102,3 +102,24 @@ export function formatWeek(iso) {
   }
   return `${dayOfMonth(first)} – ${dayOfMonth(last)} ${short(last)} ${year(last)}`;
 }
+
+/** Whole days from `from` to `to` (negative when `to` is earlier). */
+export function diffDays(from, to) {
+  return Math.round((parseIso(to) - parseIso(from)) / 86_400_000);
+}
+
+/** Monday = 0 ... Sunday = 6. */
+export function weekdayIndex(iso) {
+  return (parseIso(iso).getDay() + 6) % 7;
+}
+
+/** "2 Nov" */
+export function formatShortDate(iso) {
+  return `${dayOfMonth(iso)} ${MONTHS[Number(iso.slice(5, 7)) - 1].slice(0, 3)}`;
+}
+
+/** "Nov", or "Nov 26" with the two-digit year. */
+export function formatShortMonth(iso, withYear = false) {
+  const name = MONTHS[Number(iso.slice(5, 7)) - 1].slice(0, 3);
+  return withYear ? `${name} ${iso.slice(2, 4)}` : name;
+}

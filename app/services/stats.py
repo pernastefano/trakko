@@ -101,12 +101,20 @@ def _event_type_stats(
     )
 
 
-def get_stats(session: Session, track_id: int, period: Period, ref: dt.date) -> StatsRead:
+def get_stats(
+    session: Session,
+    track_id: int,
+    period: Period,
+    ref: dt.date,
+    today: dt.date | None = None,
+) -> StatsRead:
     """Statistics for a Track.
 
     Counts, buckets and the heatmap are limited to the period around `ref`; streaks, days since
-    the last entry and the average interval always use the whole history, with `ref` as "today".
+    the last entry and the average interval always use the whole history, with `today` (default
+    `ref`) as the current day.
     """
+    today = today or ref
     get_track(session, track_id)
     event_types = session.scalars(
         select(EventType)
@@ -137,7 +145,7 @@ def get_stats(session: Session, track_id: int, period: Period, ref: dt.date) -> 
         dates = dates_by_type[event_type.id]
         in_range = [day for day in dates if within(day)]
         day_counts.update(in_range)
-        stats.append(_event_type_stats(event_type, dates, in_range, ref))
+        stats.append(_event_type_stats(event_type, dates, in_range, today))
 
     granularity = "week" if period == "month" else "month"
     return StatsRead(

@@ -25,7 +25,10 @@ and log **Entries** on a calendar with an optional short note.
   it. Export all data as a JSON file, import one back (replaces everything), and sign out when a
   password is set.
 
-The statistics screen is still to come.
+- Statistics for the current Track over a month, a year or all time (arrows move between months
+  and years): entries per Event Type, current and longest streak, days since the last entry,
+  average interval between entries, a bar chart of entries per week or month and an activity
+  heatmap, all drawn as inline SVG.
 
 ## Quick start (local)
 

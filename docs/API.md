@@ -105,18 +105,21 @@ be moved to an Event Type of the same Track.
 
 ## Statistics
 
-`GET /stats?track_id=1&period=month&ref=2026-11-10`
+`GET /stats?track_id=1&period=month&ref=2026-11-10&today=2026-11-10`
 
 - `period`: `month` (default), `year` or `all`.
-- `ref`: the reference "today" (default: server date); the period is the month/year containing it.
+- `ref`: any date in the period to look at (default: `today`); the period is the month/year
+  containing it.
+- `today`: the current day, used for streaks and `days_since_last` (default: `ref`, or the server
+  date when neither is given). Clients showing a past period pass their own date here.
 
 Counts, `buckets` and `heatmap` cover the period. Streaks, `days_since_last` and
-`average_interval_days` always use the whole history of the Event Type, with `ref` as today.
+`average_interval_days` always use the whole history of the Event Type, with `today` as today.
 
 - `buckets`: weekly (Monday start) for `month`, monthly for `year` and `all`; empty buckets are
   included. `all` spans the first to the last entry.
 - A *streak* is a run of consecutive days with at least one entry. The current streak is alive when
-  the last entry is `ref` or the day before.
+  the last entry is `today` or the day before.
 - `average_interval_days` is the mean gap between consecutive distinct days (`null` with fewer than
   two days).
 

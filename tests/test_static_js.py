@@ -6,10 +6,11 @@ show up in the browser: imports of names a module does not export, and ids missi
 
 import re
 from pathlib import Path
+from typing import get_args
 
 import pytest
 
-from app.schemas import NOTE_MAX_LENGTH
+from app.schemas import NOTE_MAX_LENGTH, Period
 from app.services.pwa import STATIC_DIR, TEMPLATES_DIR
 
 JS_DIR = STATIC_DIR / "js"
@@ -176,3 +177,29 @@ def test_api_cache_name_is_shared_by_page_and_service_worker() -> None:
 
     assert page_name and worker_name
     assert page_name.group(1) == worker_name.group(1)
+
+
+def test_statistics_markup_matches_the_api_periods() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    periods = re.findall(r'data-stats-period="(\w+)"', html)
+    assert periods == list(get_args(Period))
+    assert re.search(r'data-stats-period="month" aria-pressed="true"', html), "Month is the default"
+    for control in ("stats-prev", "stats-next", "stats-title", "stats-body"):
+        assert f'id="{control}"' in html
+
+
+def test_stats_request_sends_the_period_anchor_and_today() -> None:
+    api = (JS_DIR / "api.js").read_text()
+    stats = (JS_DIR / "stats.js").read_text()
+
+    query = re.search(r"export function getStats.*?\n}\n", api, re.S).group(0)
+    for parameter in ("track_id", "period", "ref", "today"):
+        assert parameter in query
+    assert "ref: state.anchor" in stats and "today: today()" in stats
+
+
+def test_bar_chart_granularities_match_the_api() -> None:
+    charts = (JS_DIR / "charts.js").read_text()
+
+    assert 'granularity === "week"' in charts  # the API only returns "week" or "month"

@@ -119,3 +119,9 @@ export async function logout() {
   // Do not leave the signed-in user's data in the offline cache.
   if ("caches" in window) await caches.delete(API_CACHE_NAME);
 }
+
+/** Statistics for a Track: `ref` anchors the month/year, `today` is the current day. */
+export function getStats({ trackId, period, ref, today }) {
+  const query = new URLSearchParams({ track_id: trackId, period, ref, today });
+  return request("GET", `/stats?${query}`);
+}

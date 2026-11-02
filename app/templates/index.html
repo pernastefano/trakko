@@ -51,7 +51,23 @@
       <div id="cal-body" class="cal-body"></div>
     </section>
     <section id="view-stats" data-view="stats" aria-label="Statistics" hidden>
-      <p class="placeholder">Statistics will appear here.</p>
+      <div class="cal-controls">
+        <div class="segmented" role="group" aria-label="Statistics period">
+          <button type="button" data-stats-period="month" aria-pressed="true">Month</button>
+          <button type="button" data-stats-period="year" aria-pressed="false">Year</button>
+          <button type="button" data-stats-period="all" aria-pressed="false">All</button>
+        </div>
+      </div>
+      <div class="cal-nav">
+        <button id="stats-prev" type="button" class="icon-btn" aria-label="Previous period">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <h2 id="stats-title" class="cal-title" aria-live="polite"></h2>
+        <button id="stats-next" type="button" class="icon-btn" aria-label="Next period">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+      <div id="stats-body" class="stats-body"></div>
     </section>
     <section id="view-settings" data-view="settings" aria-label="Settings" hidden>
       <div id="settings-home" class="settings-screen">
