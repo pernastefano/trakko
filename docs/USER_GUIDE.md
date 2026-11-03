@@ -127,12 +127,19 @@ In **Settings → Data**:
   you to confirm first. A file that cannot be read, or that is not a valid TRAKKO export, is
   rejected and nothing changes.
 
+### Default calendar view
+
+Under **Settings → Tracks**, **Default calendar view** (Day, Week or Month) sets the view the app
+opens with. It is saved in your account, so every device you sign in on starts the same way. You can
+still switch view at any time from the calendar; that does not change your default.
+
 ### Appearance
 
 **Settings → Appearance** lets you pick a theme. **Automatic** (the full-width card at the top) is the
 default look, or a light one when your phone is set to light mode; below it are **Graphite**, **Midnight**, **Forest** and **Ember** (dark), and
-**Paper** and **Sand** (light). The change is immediate. It is remembered on this device only, so
-each phone or computer can have its own.
+**Paper** and **Sand** (light). The change is immediate and is saved in your account, so every
+device you sign in on shows the same theme. (If the app cannot reach the server it says so and
+applies the theme on that device only.)
 
 ### Account
 
@@ -144,11 +151,12 @@ each phone or computer can have its own.
   current password it cannot be changed here (there is no email recovery).
 - **Sign out**: do it when you share a device.
 
-### Credits
+### Version and credits
 
 The last section of Settings has two links: the **Project** (TRAKKO, on GitHub:
 https://github.com/pernastefano/trakko/) and its **Author** (Stefano Perna:
-https://github.com/pernastefano/).
+https://github.com/pernastefano/). Below them, a small line shows the version of the app that is
+running (for example `TRAKKO v0.1.0`): useful when you report a problem.
 
 ## Working offline
 

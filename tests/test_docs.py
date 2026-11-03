@@ -156,7 +156,7 @@ def test_every_endpoint_in_the_api_tables_exists() -> None:
         (DOCS / "API.md").read_text(),
         re.M,
     )
-    assert len(rows) == 21, "the API tables were not parsed as expected"
+    assert len(rows) == 24, "the API tables were not parsed as expected"
     operations = openapi_operations()
     for method, path in rows:
         assert (method, normalized(path)) in operations, f"API.md documents {method} {path}"

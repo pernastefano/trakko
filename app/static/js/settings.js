@@ -1,11 +1,13 @@
 import {
   createTrack,
   deleteTrack,
+  getAbout,
   listEventTypes,
   listTracks,
   logout,
   reorderEventTypes,
   reorderTracks,
+  updatePreferences,
   updateTrack,
 } from "./api.js";
 import { confirmAction } from "./confirm.js";
@@ -71,7 +73,7 @@ function showError(node, message) {
  * Types. Routes: `#/settings` and `#/settings/tracks/<id>`. Dispatches `trakko:data-changed`
  * whenever something was modified so the Home screen can reload.
  */
-export function createSettings() {
+export function createSettings({ onDefaultViewChange }) {
   const homeScreen = document.getElementById("settings-home");
   const trackScreen = document.getElementById("settings-track");
   const trackList = document.getElementById("settings-tracks");
@@ -80,6 +82,8 @@ export function createSettings() {
   const newTrackName = document.getElementById("new-track-name");
   const accountName = document.getElementById("account-name");
   const accountStatus = document.getElementById("account-status");
+  const viewButtons = document.querySelectorAll("[data-default-view]");
+  const appVersion = document.getElementById("app-version");
 
   const trackForm = document.getElementById("track-form");
   const trackNameInput = document.getElementById("track-name-input");
@@ -105,6 +109,29 @@ export function createSettings() {
 
   const typeEditor = createTypeEditor({ onChange: changedAndRefresh });
   initDataTransfer({ onImported: changedAndRefresh });
+
+  // --- Default calendar view ---
+
+  function showDefaultView(view) {
+    for (const button of viewButtons) {
+      button.setAttribute("aria-pressed", String(button.dataset.defaultView === view));
+    }
+  }
+
+  for (const button of viewButtons) {
+    button.addEventListener("click", async () => {
+      const view = button.dataset.defaultView;
+      showError(homeError, null);
+      try {
+        await updatePreferences({ default_view: view });
+      } catch (failure) {
+        showError(homeError, failure.message);
+        return;
+      }
+      showDefaultView(view);
+      onDefaultViewChange(view);
+    });
+  }
 
   // --- Track list ---
 
@@ -307,10 +334,17 @@ export function createSettings() {
 
   return {
     /** Call once the user is authenticated; shows the screen the URL points to. */
-    activate(username) {
+    activate({ username, defaultView }) {
       ready = true;
       accountName.textContent = username ? `Signed in as ${username}` : "";
+      showDefaultView(defaultView);
       route();
+      getAbout()
+        .then(({ version }) => {
+          appVersion.textContent = `TRAKKO v${version}`;
+          appVersion.hidden = false;
+        })
+        .catch(() => {});
     },
   };
 }

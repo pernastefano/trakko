@@ -6,10 +6,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from app import __version__
 from app.config import get_settings
 from app.deps import current_user
 from app.errors import AppError
-from app.routers import auth, data, entries, event_types, pwa, stats, tracks
+from app.routers import about, auth, data, entries, event_types, preferences, pwa, stats, tracks
 from app.services.pwa import STATIC_DIR
 
 API_PREFIX = "/api/v1"
@@ -56,7 +57,7 @@ def create_app() -> FastAPI:
             "whenever the app restarts. Set it in production."
         )
 
-    app = FastAPI(title="TRAKKO")
+    app = FastAPI(title="TRAKKO", version=__version__)
     app.add_exception_handler(AppError, _handle_app_error)
     app.add_exception_handler(RequestValidationError, _handle_validation_error)
 
@@ -64,7 +65,7 @@ def create_app() -> FastAPI:
     api.include_router(auth.router)
     # Every route in here needs a signed-in user, whatever the endpoint itself asks for.
     protected = APIRouter(dependencies=[Depends(current_user)])
-    for router in (tracks, event_types, entries, stats, data):
+    for router in (tracks, event_types, entries, stats, data, preferences, about):
         protected.include_router(router.router)
     api.include_router(protected)
     app.include_router(api)

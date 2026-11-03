@@ -29,6 +29,7 @@ flowchart LR
 | Layer | Where | Responsibility |
 |-------|-------|----------------|
 | Entry point | `app/main.py` | Builds the app, registers routers, error handlers and `/static`, serves `/health`. |
+| Version | `app/__init__.py` | `__version__`, the one place the version is defined (shown in Settings and in the OpenAPI document). |
 | Settings | `app/config.py` | Reads `TRAKKO_DB_PATH`, `TRAKKO_SECRET_KEY` and `TRAKKO_ALLOW_REGISTRATION` from the environment. |
 | Database | `app/db.py`, `app/models.py`, `alembic/` | Engine (foreign keys on), declarative models, migrations. |
 | Schemas | `app/schemas.py` | Pydantic v2 models: validation of colors, dates, notes, icons, export documents. |
@@ -49,6 +50,8 @@ erDiagram
         int id PK
         string username
         string password_hash
+        string default_view
+        string theme
         datetime created_at
     }
     TRACK {
@@ -80,6 +83,11 @@ erDiagram
 - **Ownership.** Every Track belongs to exactly one user; Event Types and Entries belong to a user
   through their Track. Every query in `app/services/` takes the signed-in user's id and filters on
   it, and a resource of another user is reported as "not found".
+- **User settings.** `users.default_view` (`day`, `week` or `month`, default `month`, enforced by a
+  `CHECK`) is the calendar view the app opens with. It lives in the database, not in the browser,
+  so it follows the user across devices. So does `users.theme`, the chosen color theme (`NULL` until
+  one is chosen; not constrained in the database, so themes can come and go without a migration, and
+  a retired value reads back as `auto`).
 - **Cascades.** Deleting a user deletes their Tracks; deleting a Track deletes its Event Types and
   their Entries; deleting an Event Type deletes its Entries. This is enforced by `ON DELETE CASCADE` foreign keys (SQLite's
   `PRAGMA foreign_keys=ON` is switched on for every connection in `app/db.py`) and mirrored by the
@@ -175,8 +183,16 @@ Text is always inserted with `textContent` (never HTML) and there are no inline 
 Every color comes from CSS custom properties, and a theme is a block of `app.css` that sets the same
 ten variables: Graphite, Midnight, Forest and Ember (dark) and Paper and Sand (light), selected by a
 `data-theme` attribute on `<html>`. "Automatic" (no attribute) is Graphite, or Paper when the device
-is set to light, through `prefers-color-scheme`. The choice is a **per-device** preference kept in
-`localStorage` (`trakko.theme`), not part of the account.
+is set to light, through `prefers-color-scheme`.
+
+The choice belongs to the **account** (`users.theme`, through `PATCH /api/v1/preferences`) so it follows
+the user across devices. Each device also keeps a copy in `localStorage` (`trakko.theme`), because
+the page must be drawn in the right colors before anything is loaded, and the sign-in screen has no
+account yet. Choosing a theme applies it and updates the copy immediately, then saves it to the
+account (if that fails, a message says it only applies on this device). After sign-in the app
+**adopts** the account's theme and refreshes the copy; if the account has none yet (`NULL`, as for
+everyone before this was an account setting) the device's current theme is saved to the account
+instead, so nobody loses the theme they had picked.
 
 To avoid a flash of the wrong theme, `theme-init.js` is a small plain (non-module) script in
 `<head>` that sets the attribute before anything is painted; `theme.js` then keeps the browser's own

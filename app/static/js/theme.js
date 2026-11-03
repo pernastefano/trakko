@@ -16,7 +16,7 @@ function isTheme(id) {
   return THEMES.some((theme) => theme.id === id);
 }
 
-/** The saved theme id, or "auto". The choice belongs to this device, not to the account. */
+/** The theme id saved on this device, or "auto". It is a copy of the account's theme (see appearance.js). */
 export function savedTheme() {
   try {
     const id = localStorage.getItem(STORAGE_KEY);
@@ -43,7 +43,7 @@ export function applyTheme(id) {
   updateBrowserColor(id);
 }
 
-/** Apply a theme and remember it on this device. */
+/** Apply a theme and remember it on this device (saving it to the account is up to the caller). */
 export function chooseTheme(id) {
   const theme = isTheme(id) ? id : DEFAULT_THEME;
   try {

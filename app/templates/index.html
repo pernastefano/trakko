@@ -87,6 +87,14 @@
           <input id="new-track-name" type="text" maxlength="100" placeholder="New Track" required autocomplete="off">
           <button type="submit" class="primary-btn">Add</button>
         </form>
+        <div class="setting-field">
+          <span id="default-view-label" class="setting-label">Default calendar view</span>
+          <div class="segmented" role="group" aria-labelledby="default-view-label">
+            <button type="button" data-default-view="day" aria-pressed="false">Day</button>
+            <button type="button" data-default-view="week" aria-pressed="false">Week</button>
+            <button type="button" data-default-view="month" aria-pressed="true">Month</button>
+          </div>
+        </div>
         <p id="settings-error" class="form-error" role="alert" hidden></p>
 
         <h2 class="settings-heading">Data</h2>
@@ -99,6 +107,7 @@
 
         <h2 class="settings-heading">Appearance</h2>
         <div id="theme-options" class="theme-options" role="radiogroup" aria-label="Theme"></div>
+        <p id="theme-error" class="form-error" role="alert" hidden></p>
 
         <h2 class="settings-heading">Account</h2>
         <p id="account-name" class="settings-note"></p>
@@ -113,6 +122,7 @@
           <li><span class="credits-label">Project</span> <a id="credits-project-link" href="https://github.com/pernastefano/trakko/" target="_blank" rel="noopener noreferrer">TRAKKO</a></li>
           <li><span class="credits-label">Author</span> <a id="credits-author-link" href="https://github.com/pernastefano/" target="_blank" rel="noopener noreferrer">Stefano Perna</a></li>
         </ul>
+        <p id="app-version" class="app-version" hidden></p>
       </div>
 
       <div id="settings-track" class="settings-screen" hidden>

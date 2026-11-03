@@ -19,6 +19,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check that the tag matches the app version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          version=$(sed -n 's/^__version__ = "\(.*\)"$/\1/p' app/__init__.py)
+          if [ "v${version}" != "${GITHUB_REF_NAME}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match the app version v${version} (app/__init__.py)" >&2
+            exit 1
+          fi
+
       # GHCR image names must be lowercase, but the owner may not be.
       - name: Compute image name
         id: image

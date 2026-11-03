@@ -209,6 +209,13 @@ export function createCalendar() {
       render();
       load();
     },
+    /** Show Day, Week or Month (the user's default view is applied this way at startup). */
+    setView(view) {
+      if (!["day", "week", "month"].includes(view) || view === state.view) return;
+      state.view = view;
+      render();
+      load();
+    },
     /** Reload the visible period, e.g. after entries were changed. */
     refresh: load,
   };

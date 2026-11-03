@@ -142,3 +142,80 @@ def test_downgrade_restores_the_single_user_starting_point(
     engine.dispose()
 
     assert tracks == [("My Track", 1)]
+
+
+def test_existing_users_get_the_month_view_when_upgrading(
+    alembic_config: Config, db_url: str
+) -> None:
+    command.upgrade(alembic_config, "0002")
+    engine = make_engine(db_url)
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "INSERT INTO users (username, password_hash, created_at) "
+                "VALUES ('old', 'x', '2026-11-03 00:00:00')"
+            )
+        )
+    command.upgrade(alembic_config, "head")
+
+    with engine.connect() as connection:
+        views = connection.execute(text("SELECT default_view FROM users")).scalars().all()
+    engine.dispose()
+
+    assert views == ["month"]
+
+
+def test_the_database_only_accepts_the_three_views(alembic_config: Config, db_url: str) -> None:
+    command.upgrade(alembic_config, "head")
+    engine = make_engine(db_url)
+    insert = (
+        "INSERT INTO users (username, password_hash, created_at, default_view) "
+        "VALUES ('{name}', 'x', '2026-11-03 00:00:00', '{view}')"
+    )
+    with engine.begin() as connection:
+        for name, view in (("a", "day"), ("b", "week"), ("c", "month")):
+            connection.execute(text(insert.format(name=name, view=view)))
+    with pytest.raises(IntegrityError), engine.begin() as connection:
+        connection.execute(text(insert.format(name="d", view="year")))
+    engine.dispose()
+
+
+def test_downgrading_removes_the_view_column(alembic_config: Config, db_url: str) -> None:
+    command.upgrade(alembic_config, "head")
+    command.downgrade(alembic_config, "0002")
+
+    engine = make_engine(db_url)
+    columns = {column["name"] for column in inspect(engine).get_columns("users")}
+    engine.dispose()
+
+    assert "default_view" not in columns and "username" in columns
+
+
+def test_existing_users_have_no_theme_chosen_yet(alembic_config: Config, db_url: str) -> None:
+    command.upgrade(alembic_config, "0003")
+    engine = make_engine(db_url)
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "INSERT INTO users (username, password_hash, created_at) "
+                "VALUES ('old', 'x', '2026-11-03 00:00:00')"
+            )
+        )
+    command.upgrade(alembic_config, "head")
+
+    with engine.connect() as connection:
+        themes = connection.execute(text("SELECT theme FROM users")).scalars().all()
+    engine.dispose()
+
+    assert themes == [None], "NULL lets the first device hand its theme over to the account"
+
+
+def test_downgrading_removes_the_theme_column(alembic_config: Config, db_url: str) -> None:
+    command.upgrade(alembic_config, "head")
+    command.downgrade(alembic_config, "0003")
+
+    engine = make_engine(db_url)
+    columns = {column["name"] for column in inspect(engine).get_columns("users")}
+    engine.dispose()
+
+    assert "theme" not in columns and "default_view" in columns

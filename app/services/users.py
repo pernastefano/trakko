@@ -109,3 +109,15 @@ def authenticate(session: Session, username: str, password: str) -> User:
     if user is None:
         raise UnauthorizedError("Invalid username or password")
     return user
+
+
+def update_preferences(
+    session: Session, user: User, default_view: str | None = None, theme: str | None = None
+) -> User:
+    """Change the given preferences; those left out (None) stay as they are."""
+    if default_view is not None:
+        user.default_view = default_view
+    if theme is not None:
+        user.theme = theme
+    session.commit()
+    return user

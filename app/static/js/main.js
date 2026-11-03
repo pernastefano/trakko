@@ -1,4 +1,4 @@
-import { listTracks } from "./api.js";
+import { getPreferences, listTracks } from "./api.js";
 import { ensureAuthenticated } from "./auth.js";
 import { initAppearance } from "./appearance.js";
 import { createCalendar } from "./calendar.js";
@@ -28,7 +28,7 @@ createDayEditor({
     stats.invalidate();
   },
 });
-const settings = createSettings();
+const settings = createSettings({ onDefaultViewChange: calendar.setView });
 
 function showLoadError(message) {
   loadErrorMessage.textContent = message;
@@ -40,8 +40,13 @@ async function load() {
   try {
     const status = await ensureAuthenticated();
     app.hidden = false;
-    trackSelector.setTracks(await listTracks());
-    settings.activate(status?.username ?? null);
+    // A missing preference (e.g. offline with nothing cached) must not stop the app: Month it is.
+    const [tracks, preferences] = await Promise.all([listTracks(), getPreferences().catch(() => null)]);
+    const defaultView = preferences?.default_view ?? "month";
+    calendar.setView(defaultView);
+    if (preferences) appearance.adopt(preferences.theme);
+    trackSelector.setTracks(tracks);
+    settings.activate({ username: status?.username ?? null, defaultView });
   } catch (error) {
     app.hidden = false;
     showLoadError(error.message || "Could not load your data.");
@@ -57,7 +62,7 @@ window.addEventListener("trakko:data-changed", async () => {
   }
 });
 
-initAppearance();
+const appearance = initAppearance();
 initOfflineBanner();
 initViews();
 document.getElementById("load-retry").addEventListener("click", load);

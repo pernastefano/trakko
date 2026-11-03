@@ -12,11 +12,19 @@ def utcnow() -> dt.datetime:
 
 class User(Base):
     __tablename__ = "users"
+    __table_args__ = (
+        CheckConstraint("default_view IN ('day', 'week', 'month')", name="ck_users_default_view"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column(String(32), unique=True)
     password_hash: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[dt.datetime] = mapped_column(default=utcnow)
+    # The calendar view the app opens with for this user.
+    default_view: Mapped[str] = mapped_column(String(5), default="month", server_default="month")
+    # The color theme; NULL until the user (or their first device) picks one. Not constrained in
+    # the database so themes can be added or retired without a migration: the API validates it.
+    theme: Mapped[str | None] = mapped_column(String(16), default=None)
 
     tracks: Mapped[list["Track"]] = relationship(
         back_populates="user",

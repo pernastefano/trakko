@@ -145,16 +145,28 @@ alembic upgrade head && uvicorn app.main:app --host 127.0.0.1 --port 8000
 the paths the Dockerfile copies must exist and not be ignored, and the workflow files must keep the
 triggers, permissions and tags the documentation describes.
 
+## Releasing
+
+The version is defined once, as `__version__` in `app/__init__.py`; Settings, the OpenAPI document and
+`GET /api/v1/about` all read it. To release `1.2.3`:
+
+1. Set `__version__ = "1.2.3"` and, in `CHANGELOG.md`, turn "Unreleased" into `## [1.2.3] - <date>`
+   (keep a fresh empty "Unreleased" above it).
+2. Commit, then tag and push: `git tag v1.2.3 && git push --tags`.
+3. The **Docker** workflow publishes `1.2.3` and `1.2` (and the tag fails if it does not match
+   `__version__`, so a wrong tag never produces an image).
+
 ## Adding a theme
 
 1. In `app/static/css/app.css` add a `[data-theme="<id>"]` block that sets all ten variables of the
    others (`--bg`, `--surface`, `--text`, `--muted`, `--border`, `--accent`, `--accent-text`,
    `--danger`, `--banner-bg`, `--banner-text`) and `color-scheme`.
-2. Add `{ id, name, hint }` to `THEMES` in `app/static/js/theme.js` (the id is lowercase letters
-   only).
-3. Run `pytest tests/test_theme.py`: it checks that the theme is complete, readable (contrast), as
-   dark or light as it claims and free of violet, and that the picker and the stylesheet list the
-   same themes.
+2. Add `{ id, name }` to `THEMES` in `app/static/js/theme.js` (the id is lowercase letters only).
+3. Add the id to `THEME_IDS` and to the `ThemeId` literal in `app/schemas.py`: that is the list the
+   API accepts for a user's `theme`. No migration is needed (the column is not constrained).
+4. Run `pytest tests/test_theme.py tests/test_preferences.py`: they check that the theme is complete,
+   readable (contrast), as dark or light as it claims and free of violet, and that the stylesheet,
+   the picker and the server list exactly the same themes.
 
 ## Database
 

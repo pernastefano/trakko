@@ -69,11 +69,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   icons and theme colors.
 
 - **Themes.** Settings → Appearance: Automatic, Graphite, Midnight, Forest, Ember (dark), Paper and
-  Sand (light). The choice is saved per device and applied before the page is drawn.
+  Sand (light). The choice is applied before the page is drawn and kept on the device as a copy.
 - **Change password** (Settings → Account, `POST /api/v1/auth/password`). It asks for the current
   password and ends the user's other sessions.
 
+- **Default calendar view** per user (Day, Week or Month), chosen in Settings → Tracks and saved in
+  the account (`users.default_view`, migration `0003`; `GET`/`PATCH /api/v1/preferences`). The app
+  opens with it on every device.
+- **App version**: defined once in `app/__init__.py` (0.1.0), shown at the bottom of Settings
+  (`GET /api/v1/about`) and reported by the OpenAPI document. A release tag that does not match it
+  makes the Docker workflow fail.
+
 ### Changed
+- **The theme now belongs to the account** (`users.theme`, migration `0004`; `theme` in
+  `GET`/`PATCH /api/v1/preferences`), so it follows the user to every device. The device keeps a copy
+  so the page is drawn in the right colors before anything loads. Users who had picked a theme before
+  keep it: the first device to sign in hands its theme to the account.
 - Credits have two links: the project (TRAKKO) and the author (Stefano Perna), each to its GitHub page.
 - Appearance: the theme cards show only the name, and Automatic takes the whole row.
 - Event Type colors: a palette of 24 colors plus the background and surface color of every theme (read

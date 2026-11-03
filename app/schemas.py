@@ -10,6 +10,7 @@ from pydantic import (
     Field,
     StringConstraints,
     field_serializer,
+    field_validator,
     model_validator,
 )
 
@@ -18,6 +19,10 @@ ICON_VALUE_MAX_LENGTH = 16
 
 IconKind = Literal["none", "emoji", "text"]
 Period = Literal["month", "year", "all"]
+CalendarView = Literal["day", "week", "month"]
+# Must match THEMES in static/js/theme.js and the [data-theme] blocks in app.css (tests check it).
+THEME_IDS = ("auto", "graphite", "midnight", "forest", "ember", "paper", "sand")
+ThemeId = Literal["auto", "graphite", "midnight", "forest", "ember", "paper", "sand"]
 
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
@@ -293,6 +298,27 @@ class LoginRequest(BaseModel):
 class ChangePasswordRequest(BaseModel):
     current_password: Annotated[str, StringConstraints(min_length=1, max_length=128)]
     new_password: NewPassword
+
+
+class PreferencesRead(BaseModel):
+    default_view: CalendarView
+    theme: ThemeId | None
+
+    @field_validator("theme", mode="before")
+    @classmethod
+    def retired_theme_becomes_automatic(cls, value: object) -> object:
+        # A theme that was stored and later removed must not break the settings page.
+        return value if value is None or value in THEME_IDS else "auto"
+
+
+class PreferencesUpdate(BaseModel):
+    default_view: CalendarView | None = None
+    theme: ThemeId | None = None
+
+
+class AboutRead(BaseModel):
+    name: str
+    version: str
 
 
 class AuthStatus(BaseModel):

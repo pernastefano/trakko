@@ -144,3 +144,15 @@ export function changePassword(currentPassword, newPassword) {
     new_password: newPassword,
   });
 }
+
+export function getPreferences() {
+  return request("GET", "/preferences");
+}
+
+export function updatePreferences(data) {
+  return request("PATCH", "/preferences", data);
+}
+
+export function getAbout() {
+  return request("GET", "/about");
+}

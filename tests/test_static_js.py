@@ -10,7 +10,7 @@ from typing import get_args
 
 import pytest
 
-from app.schemas import NOTE_MAX_LENGTH, Period, check_icon
+from app.schemas import NOTE_MAX_LENGTH, CalendarView, Period, check_icon
 from app.services.pwa import STATIC_DIR, TEMPLATES_DIR
 
 JS_DIR = STATIC_DIR / "js"
@@ -383,8 +383,8 @@ def test_the_signed_in_user_is_passed_to_settings() -> None:
     main = (JS_DIR / "main.js").read_text()
     settings = (JS_DIR / "settings.js").read_text()
 
-    assert "settings.activate(status?.username ?? null)" in main
-    assert "activate(username)" in settings
+    assert "settings.activate({ username: status?.username ?? null, defaultView })" in main
+    assert "activate({ username, defaultView })" in settings
 
 
 def test_page_script_clears_cached_data_when_the_account_changes() -> None:
@@ -493,3 +493,110 @@ def test_today_stays_readable_when_it_is_shown_as_a_day_of_a_neighboring_month()
     rule = re.search(r"\.month-day\.is-outside\.is-today \.month-number \{([^}]*)\}", css)
     assert rule and "color: var(--accent-text)" in rule.group(1)
     assert css.index(".month-day.is-outside .month-number") < css.index(rule.group(0))
+
+
+# --- default calendar view and app version ---
+
+
+def test_default_view_control_markup() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    group = re.search(
+        r'<span id="default-view-label"[^>]*>(.*?)</span>\s*<div class="segmented"(.*?)</div>',
+        html,
+        re.S,
+    )
+    assert group, "default view control missing"
+    assert group.group(1) == "Default calendar view"
+    assert 'role="group" aria-labelledby="default-view-label"' in group.group(2)
+    buttons = re.findall(r'data-default-view="(\w+)" aria-pressed="(\w+)"', group.group(2))
+    assert [value for value, _ in buttons] == list(get_args(CalendarView))
+    assert [value for value, pressed in buttons if pressed == "true"] == ["month"]
+
+
+def test_default_view_control_lives_in_the_tracks_section() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+
+    tracks = html.index('<h2 class="settings-heading">Tracks</h2>')
+    control = html.index('id="default-view-label"')
+    data = html.index('<h2 class="settings-heading">Data</h2>')
+    assert tracks < control < data
+
+
+def test_default_view_is_saved_through_the_preferences_api() -> None:
+    api = (JS_DIR / "api.js").read_text()
+    settings = (JS_DIR / "settings.js").read_text()
+
+    assert 'request("GET", "/preferences")' in api
+    assert 'request("PATCH", "/preferences", data)' in api
+    assert "updatePreferences({ default_view: view })" in settings
+    assert "onDefaultViewChange(view)" in settings
+    # The button only looks selected once the server accepted the change.
+    assert settings.index("await updatePreferences") < settings.index("showDefaultView(view);")
+
+
+def test_default_view_is_applied_before_the_calendar_loads() -> None:
+    main = (JS_DIR / "main.js").read_text()
+    calendar = (JS_DIR / "calendar.js").read_text()
+
+    assert "createSettings({ onDefaultViewChange: calendar.setView })" in main
+    assert main.index("calendar.setView(defaultView)") < main.index(
+        "trackSelector.setTracks(tracks)"
+    )
+    assert 'preferences?.default_view ?? "month"' in main, (
+        "a missing preference falls back to Month"
+    )
+    assert "getPreferences().catch(() => null)" in main
+    assert 'setView(view) {\n      if (!["day", "week", "month"].includes(view)' in calendar
+
+
+def test_calendar_starts_on_month_until_told_otherwise() -> None:
+    assert 'view: "month",' in (JS_DIR / "calendar.js").read_text()
+
+
+def test_app_version_line_in_settings() -> None:
+    html = (TEMPLATES_DIR / "index.html").read_text()
+    settings = (JS_DIR / "settings.js").read_text()
+    api = (JS_DIR / "api.js").read_text()
+
+    assert '<p id="app-version" class="app-version" hidden></p>' in html
+    assert html.index('id="credits-author-link"') < html.index('id="app-version"')
+    assert 'request("GET", "/about")' in api
+    assert "`TRAKKO v${version}`" in settings
+    assert ".catch(() => {})" in settings, "a failed lookup must not break Settings"
+
+
+# --- theme saved to the account ---
+
+
+def test_choosing_a_theme_applies_it_then_saves_it_to_the_account() -> None:
+    appearance = (JS_DIR / "appearance.js").read_text()
+
+    assert 'import { updatePreferences } from "./api.js";' in appearance
+    choose = re.search(r"async function choose\(id\) \{(.*?)\n  \}", appearance, re.S).group(1)
+    assert choose.index("chooseTheme(id)") < choose.index("await updatePreferences({ theme: id })")
+    assert "only applied on this device" in choose, "a failed save must be reported, not hidden"
+    assert 'id="theme-error"' in (TEMPLATES_DIR / "index.html").read_text()
+
+
+def test_the_account_theme_is_adopted_after_sign_in() -> None:
+    appearance = (JS_DIR / "appearance.js").read_text()
+    main = (JS_DIR / "main.js").read_text()
+
+    assert "const appearance = initAppearance();" in main
+    assert main.index("const appearance = initAppearance();") < main.index("\nload();")
+    assert "if (preferences) appearance.adopt(preferences.theme);" in main
+    adopt = re.search(r"async adopt\(accountTheme\) \{(.*?)\n    \},", appearance, re.S).group(1)
+    # Nothing chosen on the account yet: the device's theme becomes the account's.
+    assert "accountTheme === null" in adopt
+    assert "updatePreferences({ theme: savedTheme() })" in adopt
+    # Otherwise the account wins and the local copy follows it.
+    assert "chooseTheme(accountTheme)" in adopt
+
+
+def test_the_device_keeps_a_copy_of_the_theme_for_the_first_paint() -> None:
+    early = (JS_DIR / "theme-init.js").read_text()
+    theme = (JS_DIR / "theme.js").read_text()
+
+    assert 'localStorage.getItem("trakko.theme")' in early
+    assert "localStorage.setItem(STORAGE_KEY, theme)" in theme

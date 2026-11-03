@@ -62,7 +62,7 @@ Swipe the top bar to move between Tracks, switch the calendar between **Day**, *
 
 **Make it yours**
 - Event Types with a name, a color (24 colors plus the background of every theme) and an icon: none, an emoji picked from a list, or one or two letters or digits.
-- Reorder Tracks and Event Types, choose a default Track, and change the theme any time.
+- Reorder Tracks and Event Types, choose a default Track and the calendar view you want to open with (Day, Week or Month, saved in your account), and change the theme any time (it follows your account to every device).
 
 **Accounts and data**
 - Sign up, sign in, sign out and change your password. Passwords are stored as salted `scrypt` hashes, and changing one signs out your other devices.

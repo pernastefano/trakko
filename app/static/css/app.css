@@ -1430,3 +1430,23 @@ input {
 .theme-option-wide .theme-swatch {
   width: 88px;
 }
+
+/* Default view and version in Settings */
+
+.setting-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.setting-label {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.app-version {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 0.8125rem;
+  text-align: center;
+}

@@ -213,3 +213,14 @@ def test_deleting_a_user_deletes_everything_they_own(session: Session, owner: Us
     assert [t.user_id for t in session.scalars(select(Track))] == [other.id]
     assert count(session, EventType) == 1
     assert count(session, Entry) == 1
+
+
+def test_default_view_defaults_to_month_and_rejects_other_values(session: Session) -> None:
+    user = User(username="carol", password_hash="x")
+    session.add(user)
+    session.commit()
+    assert user.default_view == "month"
+
+    user.default_view = "year"
+    with pytest.raises(IntegrityError):
+        session.commit()

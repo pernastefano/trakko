@@ -7,8 +7,13 @@ documentation and the application code.
 import ast
 import fnmatch
 import re
+import subprocess
 import sys
 from pathlib import Path
+
+import pytest
+
+from app import __version__
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCKERFILE = (ROOT / "Dockerfile").read_text()
@@ -165,3 +170,51 @@ def test_readme_badges_point_at_the_workflow_files() -> None:
     for workflow in ("ci.yml", "docker.yml"):
         assert (ROOT / ".github" / "workflows" / workflow).exists()
         assert f"/actions/workflows/{workflow}" in readme
+
+
+# --- release tags and the app version ---
+
+
+def tag_check_script() -> str:
+    """The shell code of the workflow step that compares the tag with `__version__`."""
+    step = re.search(
+        r"- name: Check that the tag matches the app version\n(.*?)\n\n", DOCKER_WORKFLOW, re.S
+    ).group(1)
+    body = step.split("run: |\n", 1)[1]
+    return "\n".join(line[10:] for line in body.splitlines())
+
+
+def run_tag_check(tag: str) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["bash", "-e", "-c", tag_check_script()],
+        cwd=ROOT,
+        env={"PATH": "/usr/bin:/bin", "GITHUB_REF_NAME": tag},
+        capture_output=True,
+        text=True,
+    )
+
+
+def test_release_tags_are_checked_against_the_app_version() -> None:
+    assert "if: startsWith(github.ref, 'refs/tags/v')" in DOCKER_WORKFLOW
+    assert DOCKER_WORKFLOW.index("Check that the tag matches") < DOCKER_WORKFLOW.index(
+        "Compute image name"
+    )
+
+
+def test_a_matching_tag_passes_the_check() -> None:
+    assert run_tag_check(f"v{__version__}").returncode == 0
+
+
+@pytest.mark.parametrize("tag", ["v9.9.9", "0.1.0", "v0.1", f"{__version__}", "vv" + __version__])
+def test_a_tag_that_does_not_match_fails_the_check(tag: str) -> None:
+    result = run_tag_check(tag)
+
+    assert result.returncode == 1
+    assert "does not match the app version" in result.stderr
+
+
+def test_the_version_lives_in_one_place() -> None:
+    source = (ROOT / "app" / "__init__.py").read_text()
+
+    assert re.findall(r'^__version__ = "([^"]+)"$', source, re.M) == [__version__]
+    assert re.fullmatch(r"\d+\.\d+\.\d+", __version__)
