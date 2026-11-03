@@ -205,7 +205,9 @@ def test_a_matching_tag_passes_the_check() -> None:
     assert run_tag_check(f"v{__version__}").returncode == 0
 
 
-@pytest.mark.parametrize("tag", ["v9.9.9", "0.1.0", "v0.1", f"{__version__}", "vv" + __version__])
+@pytest.mark.parametrize(
+    "tag", ["v9.9.9", "v0.1.0", "0.1.0", "v0.1", f"{__version__}", "vv" + __version__]
+)
 def test_a_tag_that_does_not_match_fails_the_check(tag: str) -> None:
     result = run_tag_check(tag)
 

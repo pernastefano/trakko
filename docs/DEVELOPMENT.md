@@ -174,6 +174,18 @@ Migrations live in `alembic/versions/`. The database file defaults to `data/trak
 (git-ignored); point `TRAKKO_DB_PATH` elsewhere to keep experiments separate. To start over, delete
 the file and run `alembic upgrade head` again.
 
+### Writing migrations
+
+- SQLite changes many things (adding a constraint, dropping a column) by rebuilding the table,
+  and rebuilding drops the old one. With foreign keys on, that drop **cascades into every table that
+  refers to it**. `alembic/env.py` therefore turns enforcement off while migrating and checks
+  `PRAGMA foreign_key_check` at the end; do not remove that.
+- Every migration needs a test that runs it on **real data** (several users with Tracks, Event Types
+  and Entries) and compares the rows before and after: see `tests/test_migrations_keep_data.py`.
+  A test that only inserts a user would not have caught the bug that deleted everyone's data in 0.1.0.
+- A migration that must delete data (like `0002`, which had nothing to attach it to) says so in its
+  docstring, in the changelog and in `docs/DEPLOYMENT.md`.
+
 ## Troubleshooting
 
 | Symptom | Likely cause |

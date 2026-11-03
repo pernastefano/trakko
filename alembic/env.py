@@ -30,10 +30,25 @@ def run_migrations_offline() -> None:
         context.run_migrations()
 
 
+def check_foreign_keys(connection) -> None:
+    """Fail loudly if a migration left rows that point at nothing."""
+    broken = connection.exec_driver_sql("PRAGMA foreign_key_check").fetchall()
+    if broken:
+        raise RuntimeError(f"The migration left broken foreign keys: {broken}")
+
+
 def run_migrations_online() -> None:
     connectable = make_engine(get_url())
 
     with connectable.connect() as connection:
+        # SQLite changes a table by building a new one and dropping the old one. With foreign keys
+        # enforced, dropping a table first deletes its rows, and ON DELETE CASCADE then deletes the
+        # rows of every table that refers to it: rebuilding `users` used to wipe every Track, Event
+        # Type and Entry. So enforcement stays off while migrating (the pragma is ignored inside a
+        # transaction, hence before Alembic starts one) and the result is checked instead.
+        connection.exec_driver_sql("PRAGMA foreign_keys=OFF")
+        connection.commit()
+
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
@@ -42,6 +57,7 @@ def run_migrations_online() -> None:
 
         with context.begin_transaction():
             context.run_migrations()
+            check_foreign_keys(connection)
 
 
 if context.is_offline_mode():

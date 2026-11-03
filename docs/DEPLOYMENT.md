@@ -108,6 +108,11 @@ close registration by setting `TRAKKO_ALLOW_REGISTRATION=false` and restarting.
 > starts removes it. Use **Settings → Export JSON** in the old version first; after the upgrade, create
 > your account and use **Import JSON** to load the file into it.
 
+> **Upgrade to 0.1.1 or later, never to 0.1.0.** In 0.1.0 (and in `latest` or `main` images built
+> before 0.1.1) a migration deletes every Track, Event Type and entry when it upgrades a database that
+> already has accounts. Always keep a copy of `trakko.db` (or a JSON export) before upgrading: if
+> something goes wrong, restore it. See the [changelog](../CHANGELOG.md).
+
 ```bash
 docker pull ghcr.io/pernastefano/trakko:<version>
 docker stop trakko && docker rm trakko

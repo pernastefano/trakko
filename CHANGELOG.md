@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-11-03
+
+### Fixed
+- **Upgrading a database that already had accounts no longer deletes its data.** Migration `0003`
+  rebuilds the `users` table, and SQLite does that by dropping the old one; with foreign keys
+  enforced the drop cascaded into every user's Tracks, Event Types and Entries and removed them all.
+  Migrations now run with foreign key enforcement off (the connection used by the app still has it
+  on) and the result is verified with `PRAGMA foreign_key_check`.
+- Tests that migrate real data (several users, Tracks, Event Types and Entries) through every step,
+  up and down, so a migration that loses rows can no longer pass.
+
+> **If you upgraded to 0.1.0 (or to a `latest`/`main` image built before 0.1.1) from a database that
+> already had accounts, its Tracks, Event Types and Entries were deleted** (the users and their
+> passwords were kept). Restore the `trakko.db` copy or the JSON export you made before upgrading.
+> Databases created fresh on 0.1.0, or migrated from before accounts existed, were not affected.
+
+## [0.1.0] - 2026-11-03
+
 ### Added
 - Project skeleton: FastAPI app, `/health` endpoint, environment-based configuration,
   tooling (ruff, pytest) and initial tests.
