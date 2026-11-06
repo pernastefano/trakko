@@ -173,6 +173,12 @@ export function createStats() {
 
   return {
     setTrack(track) {
+      if (state.trackId !== track.id) {
+        // Never leave the previous Track's numbers on screen while the new ones load, and ignore
+        // an answer for the previous Track that is still on its way.
+        latestRequest++;
+        body.replaceChildren();
+      }
       state.trackId = track.id;
       invalidate();
     },

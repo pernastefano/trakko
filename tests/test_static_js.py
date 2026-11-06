@@ -258,6 +258,17 @@ def test_stats_request_sends_the_period_anchor_and_today() -> None:
     assert "ref: state.anchor" in stats and "today: today()" in stats
 
 
+def test_stats_forget_the_previous_track_when_the_selected_track_changes() -> None:
+    stats = (JS_DIR / "stats.js").read_text()
+
+    set_track = re.search(r"setTrack\(track\) \{.*?\n    \},", stats, re.S).group(0)
+    # The previous Track's numbers must not stay on screen, and its late answer must be dropped.
+    assert "state.trackId !== track.id" in set_track
+    assert "latestRequest++" in set_track
+    assert "body.replaceChildren()" in set_track
+    assert set_track.index("body.replaceChildren()") < set_track.index("state.trackId = track.id")
+
+
 def test_bar_chart_granularities_match_the_api() -> None:
     charts = (JS_DIR / "charts.js").read_text()
 

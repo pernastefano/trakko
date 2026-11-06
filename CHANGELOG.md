@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Statistics no longer show the previous Track's numbers while the selected Track's statistics
+  load (noticeable on a slow connection), and a late answer for the previous Track can no longer
+  replace them.
+
 ## [0.1.1] - 2026-11-03
 
 ### Fixed
