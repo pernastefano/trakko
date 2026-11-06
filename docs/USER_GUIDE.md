@@ -156,7 +156,7 @@ applies the theme on that device only.)
 The last section of Settings has two links: the **Project** (TRAKKO, on GitHub:
 https://github.com/pernastefano/trakko/) and its **Author** (Stefano Perna:
 https://github.com/pernastefano/). Below them, a small line shows the version of the app that is
-running (for example `TRAKKO v0.1.1`): useful when you report a problem.
+running (for example `TRAKKO v0.1.2`): useful when you report a problem.
 
 ## Working offline
 

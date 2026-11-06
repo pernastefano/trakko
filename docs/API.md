@@ -51,7 +51,7 @@ but stays possible while no account exists so a new installation can always be s
 |--------|----------------|--------------------------------------------------------------------------|
 | GET    | `/preferences` | The signed-in user's settings: `{"default_view": "month", "theme": null}` |
 | PATCH  | `/preferences` | Body with either or both of `default_view` (`day`, `week` or `month`) and `theme` (`auto`, `graphite`, `midnight`, `forest`, `ember`, `paper` or `sand`). Other values are 422; fields left out or `null` are not changed |
-| GET    | `/about`       | `{"name": "TRAKKO", "version": "0.1.1"}`, the version of the running app |
+| GET    | `/about`       | `{"name": "TRAKKO", "version": "0.1.2"}`, the version of the running app |
 
 `default_view` is the calendar view the app opens with for that user (new accounts start with
 `month`). `theme` is the color theme; it is `null` until one has been chosen, and a theme that was
