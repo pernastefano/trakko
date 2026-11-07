@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-11-07
+
+### Fixed
+- The selected Track is kept when the page reloads, as iOS does when the installed app is used,
+  so Statistics (and Home) no longer jump back to the default Track. Closing the app still starts
+  on the default Track.
+
 ## [0.1.2] - 2026-11-06
 
 ### Fixed

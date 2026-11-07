@@ -1,5 +1,25 @@
 import { onSwipe } from "./swipe.js";
 
+// The selected Track survives a page reload (some phones reload a web app when it is used), but
+// not closing the app: a new start always opens on the default Track.
+const STORAGE_KEY = "trakko.track";
+
+function remembered() {
+  try {
+    return Number(sessionStorage.getItem(STORAGE_KEY)) || null;
+  } catch {
+    return null; // storage can be unavailable (e.g. private browsing)
+  }
+}
+
+function remember(track) {
+  try {
+    if (track) sessionStorage.setItem(STORAGE_KEY, String(track.id));
+  } catch {
+    // Not remembering is harmless.
+  }
+}
+
 /**
  * Track selector: previous/next buttons, swipe and a "2/5" position indicator.
  * Calls `onChange(track)` whenever the selected Track changes.
@@ -25,6 +45,7 @@ export function createTrackSelector({ onChange }) {
     if (tracks.length < 2) return;
     index = (index + step + tracks.length) % tracks.length;
     render();
+    remember(tracks[index]);
     onChange(tracks[index]);
   }
 
@@ -33,12 +54,17 @@ export function createTrackSelector({ onChange }) {
   onSwipe(bar, { onLeft: () => move(1), onRight: () => move(-1) });
 
   return {
-    /** Show `list`, selecting `keepId` if it is still there, otherwise the default Track. */
+    /**
+     * Show `list`, selecting `keepId` (or else the Track remembered for this session) if it is
+     * still there, otherwise the default Track.
+     */
     setTracks(list, keepId = null) {
       tracks = list;
-      const kept = list.findIndex((track) => track.id === keepId);
+      const wanted = keepId ?? remembered();
+      const kept = list.findIndex((track) => track.id === wanted);
       index = kept >= 0 ? kept : Math.max(0, list.findIndex((track) => track.is_default));
       render();
+      remember(tracks[index]);
       if (tracks[index]) onChange(tracks[index]);
     },
     current() {

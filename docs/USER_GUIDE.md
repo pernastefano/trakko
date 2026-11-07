@@ -46,7 +46,7 @@ file (see below) so you can start again with a new account if you ever lose acce
 ## The screen
 
 - **Top:** the current Track, with arrows and a position such as `2/5`. Swipe the bar left or right,
-  or tap the arrows, to switch Track. The app starts on your default Track.
+  or tap the arrows, to switch Track. The app starts on your default Track and keeps the one you picked if the page reloads.
 - **Middle:** the calendar (Home), your statistics, or your settings.
 - **Bottom:** **Home**, **Statistics** and **Settings**.
 
@@ -156,7 +156,7 @@ applies the theme on that device only.)
 The last section of Settings has two links: the **Project** (TRAKKO, on GitHub:
 https://github.com/pernastefano/trakko/) and its **Author** (Stefano Perna:
 https://github.com/pernastefano/). Below them, a small line shows the version of the app that is
-running (for example `TRAKKO v0.1.2`): useful when you report a problem.
+running (for example `TRAKKO v0.1.3`): useful when you report a problem.
 
 ## Working offline
 

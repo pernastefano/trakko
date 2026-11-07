@@ -269,6 +269,17 @@ def test_stats_forget_the_previous_track_when_the_selected_track_changes() -> No
     assert set_track.index("body.replaceChildren()") < set_track.index("state.trackId = track.id")
 
 
+def test_the_selected_track_is_remembered_for_the_session_only() -> None:
+    tracks = (JS_DIR / "tracks.js").read_text()
+
+    assert "sessionStorage" in tracks and "localStorage" not in tracks
+    # Storage may be unavailable (private browsing); the app must still work.
+    assert tracks.count("try {") >= 2 and tracks.count("catch") >= 2
+    # An explicit Track (after Settings changed the list) wins over the remembered one.
+    assert "keepId ?? remembered()" in tracks
+    assert "remember(tracks[index])" in tracks
+
+
 def test_bar_chart_granularities_match_the_api() -> None:
     charts = (JS_DIR / "charts.js").read_text()
 
